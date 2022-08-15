@@ -38,7 +38,12 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 writer.WriteStartElement("Compile");
                 writer.WriteAttributeString("Include", Path.Combine("..", context.VersionFileName));
                 writer.WriteElementString("Link", Path.Combine("_Generated", "version.cs"));
+
                 writer.WriteEndElement();
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("PropertyGroup");
+                writer.WriteElementString("GenerateAssemblyInfo", "false");
                 writer.WriteEndElement();
             }
         }        

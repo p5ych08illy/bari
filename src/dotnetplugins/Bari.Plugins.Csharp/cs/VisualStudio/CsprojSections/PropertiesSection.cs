@@ -40,25 +40,28 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <param name="project">The project to generate .csproj for</param>
         /// <param name="context">Current .csproj generation context</param>
         public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
-        {            
-            writer.WriteStartElement("PropertyGroup");
-            writer.WriteAttributeString("Condition", " '$(Configuration)|$(Platform)' == 'Bari|Bari' ");
-            WriteConfigurationSpecificPart(writer, project);
-            writer.WriteEndElement();
+        {
+            //writer.WriteStartElement("PropertyGroup");
+            //WriteConfigurationSpecificPart(writer, project);
+            //writer.WriteEndElement();
 
             writer.WriteStartElement("PropertyGroup");
-            
+
             // Writing out configuration specific part to the non conditional block as well
             WriteConfigurationSpecificPart(writer, project);
 
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
+            writer.WriteElementString("Configurations", "Bari");
+            writer.WriteElementString("Platforms", "Bari");
+
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
+            writer.WriteElementString("UseWPF", "true");
 
             CsharpProjectParameters parameters = project.GetInheritableParameters<CsharpProjectParameters, CsharpProjectParametersDef>("csharp");
 
             parameters.FillProjectSpecificMissingInfo(project);
-            parameters.ToCsprojProperties(writer);       
+            parameters.ToCsprojProperties(writer);
 
             WriteAppConfig(writer, project);
             if (!WriteWin32Resource(writer, project))
@@ -74,15 +77,21 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         {
             writer.WriteElementString("OutputPath",
                 ToProjectRelativePath(project, GetOutputPath(targetDir, project), "cs"));
-            writer.WriteElementString("IntermediateOutputPath",
-                ToProjectRelativePath(project,
+            var tmpFolder = ToProjectRelativePath(project,
                     Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
                                 "tmp",
                                 project.Module.Name,
                                 project.Name),
-                    "cs"));
+                    "cs");
+
+            // writer.WriteElementString("BaseIntermediateOutputPath", tmpFolder);
+            writer.WriteElementString("IntermediateOutputPath", tmpFolder);
+            writer.WriteElementString("AppendTargetFrameworkToOutputPath", "false");
+            writer.WriteElementString("AppendRuntimeIdentifierToOutputPath", "false");
+            writer.WriteElementString("ProduceReferenceAssemblyInOutDir", "true");
+            writer.WriteElementString("EnableDefaultApplicationDefinition", "false");
         }
-        
+
         private string GetOutputType(ProjectType type)
         {
             switch (type)

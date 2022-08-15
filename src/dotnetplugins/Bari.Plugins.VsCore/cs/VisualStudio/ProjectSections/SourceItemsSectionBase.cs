@@ -54,15 +54,19 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
 
         protected virtual void WriteItem(XmlWriter writer, Project project, SuiteRelativePath file, string relativePath, SourceSetType sourceSetType, string logicalPath)
         {
-            writer.WriteStartElement(GetElementNameFor(project, file));
-            writer.WriteAttributeString("Include", relativePath);
+            var elementName = GetElementNameFor(project, file);
+            if (!string.IsNullOrEmpty(elementName))
+            {
+                writer.WriteStartElement(elementName);
+                writer.WriteAttributeString("Include", relativePath);
 
-            if (ProjectSourceSetName != sourceSetType)
-                writer.WriteElementString("LogicalName", logicalPath);
+                if (ProjectSourceSetName != sourceSetType)
+                    writer.WriteElementString("LogicalName", logicalPath);
 
-            WriteAdditionalOptions(writer, project, file);
+                WriteAdditionalOptions(writer, project, file);
 
-            writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
         }
 
         protected virtual string GetLogicalPath(Project project, SuiteRelativePath file, SourceSetType sourceSetType)

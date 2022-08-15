@@ -26,7 +26,11 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
         private static readonly ISet<string> ignoredExtensions = new HashSet<string>
             {
                 ".fsproj",
-                ".fsproj.user"
+                ".fsproj.user",
+                ".json",
+                ".cache",
+                ".props",
+                ".targets",
             };
 
         /// <summary>

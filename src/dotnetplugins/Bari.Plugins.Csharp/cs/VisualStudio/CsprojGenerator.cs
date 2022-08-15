@@ -76,17 +76,11 @@ namespace Bari.Plugins.Csharp.VisualStudio
             };
             var writer = XmlWriter.Create(output, settings);
 
-            writer.WriteProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
-            writer.WriteStartElement("Project", "http://schemas.microsoft.com/developer/msbuild/2003");
-            writer.WriteAttributeString("ToolsVersion", "4.0");
-            writer.WriteAttributeString("DefaultTargets", "Build");
+            writer.WriteStartElement("Project");
+            writer.WriteAttributeString("Sdk", "Microsoft.NET.Sdk");
 
             foreach (var section in sections)
                 section.Write(writer, project, this);
-
-            writer.WriteStartElement("Import");
-            writer.WriteAttributeString("Project", @"$(MSBuildToolsPath)\Microsoft.CSharp.targets");
-            writer.WriteEndElement();
 
             writer.WriteEndElement();
             writer.Flush();

@@ -6,6 +6,7 @@ using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Plugins.Csharp.Model;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
+using Bari.Plugins.VsCore.VisualStudio;
 
 namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 {
@@ -69,21 +70,24 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 if (IsWPFApplicationDefinition(project, file))
                     return "ApplicationDefinition";
                 else
-                    return "Page";
+                    return string.Empty;
             }
             else if (ext == ".settings")
             {
                 return "None";
             }
-            else if (relativePath.StartsWith("Service References" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase))
-            {
-                if (ext != ".cs")
-                    return "None";
-                else
-                    return "Compile";
-            }
+            //else if (relativePath.StartsWith("Properties" + Path.DirectorySeparatorChar + "Settings.Designer.cs",
+            //    StringComparison.InvariantCultureIgnoreCase))
+            //{
+            //    if (ext != ".cs")
+            //        return "None";
+            //    else
+            //        return "Compile";
+            //}
             else
-                return base.GetElementNameFor(project, file);
+            {
+                return string.Empty;
+            }
         }
 
         private bool IsWPFApplicationDefinition(Project project, string file)
@@ -130,7 +134,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             else if (projectRelativePath.Equals("Properties" + Path.DirectorySeparatorChar + "Settings.settings",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                writer.WriteElementString("Generator", "PublicSettingsSingleFileGenerator");
+                writer.WriteElementString("Generator", "SettingsSingleFileGenerator");
                 writer.WriteElementString("LastGenOutput", "Settings.Designer.cs");
             }
 

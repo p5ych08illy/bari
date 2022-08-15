@@ -26,14 +26,19 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
             // TODO: merge common code with C# PropertiesSection
 
             writer.WriteStartElement("PropertyGroup");
-            writer.WriteAttributeString("Condition", " '$(Configuration)|$(Platform)' == 'Bari|Bari' ");
+            writer.WriteElementString("Deterministic", "false");
             WriteConfigurationSpecificPart(writer, project);
             writer.WriteEndElement();
 
             writer.WriteStartElement("PropertyGroup");
             WriteConfigurationSpecificPart(writer, project);
-            
+
+
+            writer.WriteElementString("DisableImplicitFrameworkReferences", "true");
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
+            writer.WriteElementString("Configurations", "Bari");
+            writer.WriteElementString("Platforms", "Bari");
+            
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
 
@@ -49,13 +54,19 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
         private void WriteConfigurationSpecificPart(XmlWriter writer, Project project)
         {
             writer.WriteElementString("OutputPath", ToProjectRelativePath(project, GetOutputPath(targetDir, project), "fs"));
-            writer.WriteElementString("IntermediateOutputPath",
-                ToProjectRelativePath(project,
+            var tmpFolder = ToProjectRelativePath(project,
                     Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
                         "tmp",
                         project.Module.Name,
                         project.Name),
-                    "fs"));
+                    "fs");
+
+          //  writer.WriteElementString("BaseIntermediateOutputPath", tmpFolder);
+            writer.WriteElementString("IntermediateOutputPath",tmpFolder);
+            writer.WriteElementString("AppendTargetFrameworkToOutputPath", "false");
+            writer.WriteElementString("AppendRuntimeIdentifierToOutputPath", "false");
+            writer.WriteElementString("ProduceReferenceAssemblyInOutDir", "true");
+
         }
 
         private string GetOutputType(ProjectType type)

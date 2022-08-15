@@ -73,38 +73,12 @@ namespace Bari.Plugins.Fsharp.VisualStudio
             };
             var writer = XmlWriter.Create(output, settings);
 
-            writer.WriteProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
-            writer.WriteStartElement("Project", "http://schemas.microsoft.com/developer/msbuild/2003");
-            writer.WriteAttributeString("ToolsVersion", "4.0");
-            writer.WriteAttributeString("DefaultTargets", "Build");
-
-            writer.WriteStartElement("Import");
-            writer.WriteAttributeString("Project", @"$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props");
-            writer.WriteAttributeString("Condition", @"Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')");            
-            writer.WriteEndElement();
+            writer.WriteStartElement("Project");
+            writer.WriteAttributeString("Sdk", "Microsoft.NET.Sdk");
 
             foreach (var section in sections)
                 section.Write(writer, project, this);
-
-            writer.WriteStartElement("Choose");
-            writer.WriteStartElement("When");
-            writer.WriteAttributeString("Condition", "'$(VisualStudioVersion)' == '11.0'");
-            writer.WriteStartElement("PropertyGroup");
-            writer.WriteElementString("FSharpTargetsPath", "$(MSBuildExtensionsPath32)\\..\\Microsoft SDKs\\F#\\3.0\\Framework\\v4.0\\Microsoft.FSharp.Targets");
-            writer.WriteEndElement(); // PropertyGroup
-            writer.WriteEndElement(); // When
-            writer.WriteStartElement("Otherwise");
-            writer.WriteStartElement("PropertyGroup");
-            writer.WriteElementString("FSharpTargetsPath", "$(MSBuildExtensionsPath32)\\Microsoft\\VisualStudio\\v$(VisualStudioVersion)\\FSharp\\Microsoft.FSharp.Targets");
-            writer.WriteEndElement(); // PropertyGroup
-            writer.WriteEndElement(); // Otherwise
-            writer.WriteEndElement(); // Choose
-
-            writer.WriteStartElement("Import");
-            writer.WriteAttributeString("Project", @"$(FSharpTargetsPath)");
-            writer.WriteAttributeString("Condition", @"Exists('$(FSharpTargetsPath)')");            
-            writer.WriteEndElement();
-
+            
             writer.WriteEndElement();
             writer.Flush();
         }                 

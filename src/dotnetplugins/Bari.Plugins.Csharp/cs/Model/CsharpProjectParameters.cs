@@ -391,7 +391,7 @@ namespace Bari.Plugins.Csharp.Model
             var targetFrameworkVersion = IsTargetFrameworkVersionSpecified
                 ? TargetFrameworkVersion
                 : FrameworkVersion.v4;
-            writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(targetFrameworkVersion));
+            writer.WriteElementString("TargetFramework", ToFrameworkVersion(targetFrameworkVersion));
 
             var targetFrameworkProfile = IsTargetFrameworkProfileSpecified
                 ? TargetFrameworkProfile
@@ -417,33 +417,33 @@ namespace Bari.Plugins.Csharp.Model
             switch (targetFrameworkVersion)
             {
                 case FrameworkVersion.v20:
-                    return "v2.0";
+                    return "net20";
                 case FrameworkVersion.v30:
-                    return "v3.0";
+                    return "net30";
                 case FrameworkVersion.v35:
-                    return "v3.5";
+                    return "net35";
                 case FrameworkVersion.v4:
-                    return "v4.0";
+                    return "net40";
                 case FrameworkVersion.v45:
-                    return "v4.5";
+                    return "net45";
                 case FrameworkVersion.v451:
-                    return "v4.5.1";
+                    return "net451";
                 case FrameworkVersion.v452:
-                    return "v4.5.2";
+                    return "net452";
                 case FrameworkVersion.v46:
-                    return "v4.6";
+                    return "net46";
                 case FrameworkVersion.v461:
-                    return "v4.6.1";
+                    return "net461";
                 case FrameworkVersion.v462:
-                    return "v4.6.2";
+                    return "net462";
                 case FrameworkVersion.v47:
-                    return "v4.7";
+                    return "net47";
                 case FrameworkVersion.v471:
-                    return "v4.7.1";
+                    return "net471";
                 case FrameworkVersion.v472:
-                    return "v4.7.2";
+                    return "net472";
                 case FrameworkVersion.v48:
-                    return "v4.8";
+                    return "net48";
                 default:
                     throw new ArgumentOutOfRangeException("targetFrameworkVersion");
             }
