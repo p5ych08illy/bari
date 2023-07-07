@@ -160,7 +160,11 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             var cliMode = project.GetCLIMode();
             if (cliMode != CppCliMode.Disabled)
             {
-                writer.WriteElementString("CLRSupport", cliMode.ToString().Replace("Enabled", "true"));
+                var compilerParameters = project.GetInheritableParameters<VCppProjectCompilerParameters, VCppProjectCompilerParametersDef>("cpp-compiler");
+                if (compilerParameters.IsTargetFrameworkVersionSpecified && compilerParameters.TargetFrameworkVersion >= VsCore.Model.FrameworkVersion.v6)
+                    writer.WriteElementString("CLRSupport", "NetCore");
+                else
+                    writer.WriteElementString("CLRSupport", cliMode.ToString().Replace("Enabled", "true"));
             }
 
             writer.WriteElementString("WholeProgramOptimization", XmlConvert.ToString(Suite.ActiveGoal.Has(Suite.ReleaseGoal.Name)));

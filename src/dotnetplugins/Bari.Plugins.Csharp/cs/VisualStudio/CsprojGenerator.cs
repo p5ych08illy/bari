@@ -1,9 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.Csharp.Model;
+using Bari.Plugins.Csharp.VisualStudio.CsprojSections;
+using Bari.Plugins.VsCore.Model;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
@@ -12,7 +16,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
     /// <summary>
     /// Class for generating a Visual C# project file from a bari project model
     /// </summary>
-    public class CsprojGenerator: IMSBuildProjectGeneratorContext
+    public class CsprojGenerator : IMSBuildProjectGeneratorContext
     {
         private readonly IEnumerable<IMSBuildProjectSection> sections;
 
@@ -49,7 +53,7 @@ namespace Bari.Plugins.Csharp.VisualStudio
         /// </summary>
         /// <param name="sections">Csproj section writers to be used</param>
         public CsprojGenerator(IEnumerable<IMSBuildProjectSection> sections)
-        {            
+        {
             this.sections = sections;
         }
 
@@ -76,14 +80,48 @@ namespace Bari.Plugins.Csharp.VisualStudio
             };
             var writer = XmlWriter.Create(output, settings);
 
-            writer.WriteStartElement("Project");
-            writer.WriteAttributeString("Sdk", "Microsoft.NET.Sdk");
+            var csharpParams = project.GetInheritableParameters<CsharpProjectParameters, CsharpProjectParametersDef>("csharp");
+
+            if (project.IsSDKProject())
+            {
+                writer.WriteStartElement("Project");
+                writer.WriteAttributeString("TreatAsLocalProperty", "SelfContained");
+                var propSection = sections.OfType<PropertiesSection>().FirstOrDefault();
+                if (propSection != null)
+                {
+                    propSection.WriteOutputPath(writer, project);
+                }
+
+                writer.WriteStartElement("Import");
+                writer.WriteAttributeString("Project", "Sdk.props");
+                writer.WriteAttributeString("Sdk", "Microsoft.NET.Sdk" + (csharpParams.IsSDKSpecified ? ("." + csharpParams.SDK) : ""));
+                writer.WriteEndElement();
+            }
+            else
+            {
+                writer.WriteStartElement("Project", "http://schemas.microsoft.com/developer/msbuild/2003");
+                writer.WriteAttributeString("ToolsVersion", "4.0");
+                writer.WriteAttributeString("DefaultTargets", "Build");
+            }
 
             foreach (var section in sections)
                 section.Write(writer, project, this);
 
+            if (!project.IsSDKProject())
+            {
+                writer.WriteStartElement("Import");
+                writer.WriteAttributeString("Project", @"$(MSBuildToolsPath)\Microsoft.CSharp.targets");
+                writer.WriteEndElement();
+            }
+            else
+            {
+                writer.WriteStartElement("Import");
+                writer.WriteAttributeString("Project", "Sdk.targets");
+                writer.WriteAttributeString("Sdk", "Microsoft.NET.Sdk" + (csharpParams.IsSDKSpecified ? ("." + csharpParams.SDK) : ""));
+                writer.WriteEndElement();
+            }
             writer.WriteEndElement();
             writer.Flush();
-        }                 
+        }
     }
 }

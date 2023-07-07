@@ -27,9 +27,9 @@ namespace Bari.Plugins.Nuget.Build
     [PersistentReference]
     [FallbackToCache]
     [AggressiveCacheRestore]
-    public class NugetReferenceBuilder: ReferenceBuilderBase<NugetReferenceBuilder>, IEquatable<NugetReferenceBuilder>
+    public class NugetReferenceBuilder : ReferenceBuilderBase<NugetReferenceBuilder>, IEquatable<NugetReferenceBuilder>
     {
-        private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (NugetReferenceBuilder));
+        private readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(NugetReferenceBuilder));
 
         private readonly INuGet nuget;
         private readonly IFileSystemDirectory targetRoot;
@@ -52,7 +52,7 @@ namespace Bari.Plugins.Nuget.Build
             this.output = output;
             this.project = project;
         }
-        
+
         /// <summary>
         /// Gets an unique identifier which can be used to identify cached results
         /// </summary>
@@ -73,17 +73,34 @@ namespace Bari.Plugins.Nuget.Build
                 output.Message(String.Format("Resolving reference {0}", reference.Uri));
 
             string pkgName = reference.Uri.Host;
-            string pkgVersion = reference.Uri.AbsolutePath.TrimStart('/');            
+            string pkgVersion = reference.Uri.AbsolutePath.TrimStart('/');
+            var packagerReference = false;
 
-            var depsRoot = targetRoot.CreateDirectory("deps");
-            var depDir = depsRoot.CreateDirectory(pkgName);
+            if (project.HasParameters("nuget"))
+            {
+                var nugetParams = project.GetParameters<Packager.NugetPackagerParameters>("nuget");
+                packagerReference = nugetParams.PackageReference;
+            }
 
-            var files = nuget.InstallPackage(pkgName, pkgVersion, depDir, "", dllsOnly: reference.Type == ReferenceType.Build, maxProfile: GetMaxProfile());
-            var relativeRoot = Path.Combine(targetRoot.GetRelativePath(depDir), files.Item1);
-            return new HashSet<TargetRelativePath>(
-                from path in files.Item2
-                let relativePath = path.Substring(files.Item1.Length).TrimStart(Path.DirectorySeparatorChar)
-                select new TargetRelativePath(relativeRoot, relativePath));
+            if (packagerReference)
+            {
+                return new HashSet<TargetRelativePath>(new[]
+                                {
+                                    new TargetRelativePath(string.Empty, "NU!" + pkgVersion + Path.DirectorySeparatorChar + pkgName)
+                                });
+            }
+            else
+            {
+                var depsRoot = targetRoot.CreateDirectory("deps");
+                var depDir = depsRoot.CreateDirectory(pkgName);
+
+                var files = nuget.InstallPackage(pkgName, pkgVersion, depDir, "", dllsOnly: reference.Type == ReferenceType.Build, maxProfile: GetMaxProfile());
+                var relativeRoot = Path.Combine(targetRoot.GetRelativePath(depDir), files.Item1);
+                return new HashSet<TargetRelativePath>(
+                    from path in files.Item2
+                    let relativePath = path.Substring(files.Item1.Length).TrimStart(Path.DirectorySeparatorChar)
+                    select new TargetRelativePath(relativeRoot, relativePath));
+            }
         }
 
         private NugetLibraryProfile GetMaxProfile()
@@ -130,6 +147,12 @@ namespace Bari.Plugins.Nuget.Build
                         return NugetLibraryProfile.Net472;
                     case FrameworkVersion.v48:
                         return NugetLibraryProfile.Net48;
+                    case FrameworkVersion.v6:
+                        return NugetLibraryProfile.Net60;
+                    case FrameworkVersion.v7:
+                        return NugetLibraryProfile.Net70;
+                    case FrameworkVersion.v8:
+                        return NugetLibraryProfile.Net80;
                 }
             }
 
@@ -183,7 +206,7 @@ namespace Bari.Plugins.Nuget.Build
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((NugetReferenceBuilder) obj);
+            return Equals((NugetReferenceBuilder)obj);
         }
 
         /// <summary>

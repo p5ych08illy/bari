@@ -129,6 +129,39 @@ namespace Bari.Core.Model.Loader
         }
 
         /// <summary>
+        /// Gets an optional scalar value identified by its key
+        /// </summary>
+        /// <param name="parent">Parent node</param>
+        /// <param name="key">Key of the value</param>
+        /// <param name="defaultValue">Default value to be used if the key is not found in parent</param>
+        /// <returns>Returns either the scalar value read from the parent node, or the default value.</returns>
+        public bool GetOptionalScalarValue(YamlNode parent, string key, bool defaultValue)
+        {
+            Contract.Requires(parent != null);
+            Contract.Requires(key != null);
+            Contract.Ensures(Contract.Result<string>() != null || Contract.Result<bool>() == defaultValue);
+
+            var mapping = parent as YamlMappingNode;
+            if (mapping != null)
+            {
+                var pairs = EnumerateNodesOf(mapping);
+                var keyNode = new YamlScalarNode(key);
+
+                foreach (var pair in pairs)
+                {
+                    if (keyNode.Equals(pair.Key) && pair.Value is YamlScalarNode)
+                    {
+                        var scalarValue = (YamlScalarNode)pair.Value;
+                        return "true".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase) ||
+                               "yes".Equals(scalarValue.Value, StringComparison.InvariantCultureIgnoreCase);
+                    }
+                }
+            }
+
+            return defaultValue;
+        }
+
+        /// <summary>
         /// Enumerates the key-value pairs in a mapping node
         /// </summary>
         /// <param name="mapping">Mapping node to be enumerated</param>

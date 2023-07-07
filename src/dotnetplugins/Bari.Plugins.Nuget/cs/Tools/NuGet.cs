@@ -119,6 +119,9 @@ namespace Bari.Plugins.Nuget.Tools
 
         private void AddDlls(DirectoryInfo libRoot, List<string> result, LocalFileSystemDirectory localRoot, NugetLibraryProfile maxProfile)
         {
+            var lib80 = GetChild(libRoot, "net8.0");
+            var lib70 = GetChild(libRoot, "net7.0");
+            var lib60 = GetChild(libRoot, "net6.0");
             var lib45 = GetChild(libRoot, "net45-full") ??
                         GetChild(libRoot, "net45");
             var lib40 = GetChild(libRoot, "net40-full") ??
@@ -131,7 +134,15 @@ namespace Bari.Plugins.Nuget.Tools
                         GetChild(libRoot, "20");
             var lib20standard = GetChild(libRoot, "netstandard2.0");
 
-            if (lib45 != null && maxProfile == NugetLibraryProfile.Net45)
+            if (lib80 != null && maxProfile >= NugetLibraryProfile.Net80)
+                result.AddRange(GetDllsIn(localRoot, lib80));
+            else if (lib70 != null && maxProfile >= NugetLibraryProfile.Net70)
+                result.AddRange(GetDllsIn(localRoot, lib70));
+            else if (lib60 != null && maxProfile >= NugetLibraryProfile.Net60)
+                result.AddRange(GetDllsIn(localRoot, lib60));
+            else if (lib20standard != null && maxProfile >= NugetLibraryProfile.Net472)
+                result.AddRange(GetDllsIn(localRoot, lib20standard));
+            else if (lib45 != null && maxProfile == NugetLibraryProfile.Net45)
                 result.AddRange(GetDllsIn(localRoot, lib45));
             else if (lib40 != null && maxProfile >= NugetLibraryProfile.Net4)
                 result.AddRange(GetDllsIn(localRoot, lib40));
@@ -143,8 +154,6 @@ namespace Bari.Plugins.Nuget.Tools
                 result.AddRange(GetDllsIn(localRoot, lib35client));
             else if (lib20 != null && maxProfile != NugetLibraryProfile.Net2)
                 result.AddRange(GetDllsIn(localRoot, lib20));
-            else if (lib20standard != null && maxProfile >= NugetLibraryProfile.Net472)
-                result.AddRange(GetDllsIn(localRoot, lib20standard));
             else
                 result.AddRange(GetDllsIn(localRoot, libRoot));
         }

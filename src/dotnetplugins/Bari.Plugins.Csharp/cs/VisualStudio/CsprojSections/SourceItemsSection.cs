@@ -13,7 +13,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
     /// <summary>
     /// .csproj section listing all the source files
     /// </summary>
-    public class SourceItemsSection: SourceItemsSectionBase
+    public class SourceItemsSection : SourceItemsSectionBase
     {
         /// <summary>
         /// Initializes the class
@@ -25,7 +25,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 
         protected override IEnumerable<ISourceSet> GetSourceSets(Project project)
         {
-            return new[] {project.GetSourceSet("cs")};
+            return new[] { project.GetSourceSet("cs") };
         }
 
         private static readonly ISet<string> ignoredExtensions = new HashSet<string>
@@ -64,29 +64,33 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         {
             var ext = Path.GetExtension(file).ToLowerInvariant();
             var relativePath = ToProjectRelativePath(project, file, ProjectSourceSetName);
+            var isSdkProject = project.IsSDKProject();
 
             if (ext == ".xaml")
             {
                 if (IsWPFApplicationDefinition(project, file))
                     return "ApplicationDefinition";
                 else
-                    return string.Empty;
+                    return isSdkProject ? string.Empty : "Page";
             }
             else if (ext == ".settings")
             {
                 return "None";
             }
-            //else if (relativePath.StartsWith("Properties" + Path.DirectorySeparatorChar + "Settings.Designer.cs",
-            //    StringComparison.InvariantCultureIgnoreCase))
-            //{
-            //    if (ext != ".cs")
-            //        return "None";
-            //    else
-            //        return "Compile";
-            //}
-            else
+            else if (isSdkProject)
             {
                 return string.Empty;
+            }
+            else if (relativePath.StartsWith("Service References" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (ext != ".cs")
+                    return "None";
+                else
+                    return "Compile";
+            }
+            else
+            {
+                return base.GetElementNameFor(project, file);
             }
         }
 

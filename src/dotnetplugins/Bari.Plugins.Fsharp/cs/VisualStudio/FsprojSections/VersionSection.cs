@@ -3,6 +3,8 @@ using Bari.Core.Model;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 using System.IO;
+using Bari.Plugins.VsCore.Model;
+using Bari.Plugins.Fsharp.Model;
 
 namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
 {
@@ -30,21 +32,39 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
         {
             if (context.VersionOutput != null)
             {
-                // Generating the version file (F# source code)
-                var generator = new FsharpVersionInfoGenerator(project);
-                generator.Generate(context.VersionOutput);
+                if (project.IsSDKProject())
+                {
+                    // Generating the version file (F# source code)
+                    writer.WriteStartElement("PropertyGroup");
+                    if (!string.IsNullOrWhiteSpace(project.EffectiveVersion))
+                    {
+                        writer.WriteElementString("FileVersion", project.EffectiveVersion);
+                        writer.WriteElementString("AssemblyVersion", project.EffectiveVersion);
+                        writer.WriteElementString("InformationalVersion", project.EffectiveVersion);
+                    }
+                    if (!string.IsNullOrWhiteSpace(project.EffectiveCopyright))
+                        writer.WriteElementString("Copyright", project.EffectiveCopyright);
+                    if (!string.IsNullOrWhiteSpace(project.EffectiveCompany))
+                        writer.WriteElementString("Company", project.EffectiveCompany);
+                    writer.WriteEndElement();
+                }
+                else
+                {
+                    var generator = new FsharpVersionInfoGenerator(project);
+                    generator.Generate(context.VersionOutput);
 
-                // Adding reference to it to the .csproj file
-                writer.WriteStartElement("ItemGroup");
-                writer.WriteStartElement("Compile");
-                writer.WriteAttributeString("Include", Path.Combine("..", context.VersionFileName));
-                writer.WriteElementString("Link", Path.Combine("_Generated", "version.fs"));
-                writer.WriteEndElement();
-                writer.WriteEndElement();
+                    // Adding reference to it to the .csproj file
+                    writer.WriteStartElement("ItemGroup");
+                    writer.WriteStartElement("Compile");
+                    writer.WriteAttributeString("Include", Path.Combine("..", context.VersionFileName));
+                    writer.WriteElementString("Link", Path.Combine("_Generated", "version.fs"));
+                    writer.WriteEndElement();
+                    writer.WriteEndElement();
 
-                writer.WriteStartElement("PropertyGroup");
-                writer.WriteElementString("GenerateAssemblyInfo", "false");
-                writer.WriteEndElement();
+                    writer.WriteStartElement("PropertyGroup");
+                    writer.WriteElementString("GenerateAssemblyInfo", "false");
+                    writer.WriteEndElement();
+                }
             }
         }
     }

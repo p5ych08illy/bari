@@ -16,14 +16,14 @@ namespace Bari.Plugins.NUnit.Tools
 
         public NUnit(INuGet nuget, [TargetRoot] IFileSystemDirectory targetDir, IParameters parameters)
             : base(nuget, "NUnit", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "NUnit.org", "nunit-console"),
-                executableName, "NUnit.Runners", "3.10.0", parameters)
+                executableName, "NUnit.Runners", "3.16.3", parameters)
         {
             this.targetDir = targetDir;
         }
 
         private string BasePath
         {
-            get { return Path.Combine(BariInstallLocation, "NUnit.ConsoleRunner.3.10.0", "tools", executableName); }
+            get { return Path.Combine(BariInstallLocation, "NUnit.ConsoleRunner.3.16.3", "tools", executableName); }
         }
 
         protected override string ToolPath
@@ -62,6 +62,7 @@ namespace Bari.Plugins.NUnit.Tools
         {
             List<string> ps = testAssemblies.Select(p => (string)p).ToList();
             ps.Add("-result=test-report.xml");
+            ps.Add("--inprocess");
             return Run(targetDir, ps.ToArray());
         }
     }

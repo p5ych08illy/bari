@@ -23,6 +23,9 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <param name="context">Current .csproj generation context</param>
         public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
         {
+            if (project.IsSDKProject())
+                return;
+
             var csRoot = project.RootDirectory.GetChildDirectory("cs");
             if (csRoot != null)
             {

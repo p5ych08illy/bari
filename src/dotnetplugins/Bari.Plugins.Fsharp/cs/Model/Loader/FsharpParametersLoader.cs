@@ -66,7 +66,8 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                     {"tailcalls", () => { target.Tailcalls = ParseBool(parser, value); }},
                     {"target-framework-version", () => { target.TargetFrameworkVersion = ParseFrameworkVersion(ParseString(value)); }},
                     {"target-framework-profile", () => { target.TargetFrameworkProfile= ParseFrameworkProfile(ParseString(value)); }},
-                    {"target-framework", () => ApplyFrameworkVersionAndProfile(target, ParseString(value))}
+                    {"target-framework", () => ApplyFrameworkVersionAndProfile(target, ParseString(value))},
+                    {"target-os", () => { target.TargetOS = ParseString(value); }}
                 };
         }
 
@@ -100,9 +101,12 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                 case "4.7.1": return FrameworkVersion.v471;
                 case "4.7.2": return FrameworkVersion.v472;
                 case "4.8": return FrameworkVersion.v48;
+                case "6.0": return FrameworkVersion.v6;
+                case "7.0": return FrameworkVersion.v7;
+                case "8.0": return FrameworkVersion.v8;
                 default:
                     throw new InvalidSpecificationException(
-                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7', '4.7.1', '4.7.2' or '4.8'", value));
+                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7', '4.7.1', '4.7.2', '4.8', '6.0', '7.0' or '8.0'", value));
             }
         }
 
@@ -124,13 +128,13 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                 target.AllWarningsAsError = ParseBool(parser, value);
         }
 
-        private int[] ParseWarnings(YamlNode value)
+        private string[] ParseWarnings(YamlNode value)
         {
             var seq = value as YamlSequenceNode;
             if (seq != null)
-                return seq.Children.OfType<YamlScalarNode>().Select(childValue => Int32.Parse(childValue.Value)).ToArray();
+                return seq.Children.OfType<YamlScalarNode>().Select(childValue => childValue.Value).ToArray();
             else
-                return new int[0];
+                return new string[0];
         }
 
         private string[] ParseDefines(YamlNode value)

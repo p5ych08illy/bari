@@ -87,37 +87,37 @@ namespace Bari.Plugins.VCpp.Model
         /// <summary>
         /// Adds a directory to the list of directories that are searched for include files. (/I)
         /// </summary>
-        public string[] AdditionalIncludeDirectories { get { return Get<string[]>("AdditionalIncludeDirectories"); } set { Set("AdditionalIncludeDirectories", value); } } 
+        public string[] AdditionalIncludeDirectories { get { return Get<string[]>("AdditionalIncludeDirectories"); } set { Set("AdditionalIncludeDirectories", value); } }
         public bool AreAdditionalIncludeDirectoriesSpecified { get { return IsSpecified("AdditionalIncludeDirectories"); } }
 
         /// <summary>
         /// Custom options for the compiler
         /// </summary>
-        public string[] AdditionalOptions { get { return Get<string[]>("AdditionalOptions"); } set { Set("AdditionalOptions", value); } } 
+        public string[] AdditionalOptions { get { return Get<string[]>("AdditionalOptions"); } set { Set("AdditionalOptions", value); } }
         public bool AreAdditionalOptionsSpecified { get { return IsSpecified("AdditionalOptions"); } }
 
         /// <summary>
         /// Specifies a directory that the compiler will search to resolve file references passed to the #using directive. (/AI)
         /// </summary>
-        public string[] AdditionalUsingDirectories { get { return Get<string[]>("AdditionalUsingDirectories"); } set { Set("AdditionalUsingDirectories", value); } } 
+        public string[] AdditionalUsingDirectories { get { return Get<string[]>("AdditionalUsingDirectories"); } set { Set("AdditionalUsingDirectories", value); } }
         public bool AreAdditionalUsingDirectoriesSpecified { get { return IsSpecified("AdditionalUsingDirectories"); } }
 
         /// <summary>
         /// Creates a listing file that contains assembly code. (/Fa)
         /// </summary>
-        public string AssemblerListingLocation { get { return Get<string>("AssemblerListingLocation"); } set { Set("AssemblerListingLocation", value); } } 
+        public string AssemblerListingLocation { get { return Get<string>("AssemblerListingLocation"); } set { Set("AssemblerListingLocation", value); } }
         public bool IsAssemblerListingLocationSpecified { get { return IsSpecified("AssemblerListingLocation"); } }
 
         /// <summary>
         /// Type of the assembly listing
         /// </summary>
-        public AssemblerOutputType AssemblerOutput { get { return Get<AssemblerOutputType>("AssemblerOutput"); } set { Set("AssemblerOutput", value); } } 
+        public AssemblerOutputType AssemblerOutput { get { return Get<AssemblerOutputType>("AssemblerOutput"); } set { Set("AssemblerOutput", value); } }
         public bool IsAssemblerOutputSpecified { get { return IsSpecified("AssemblerOutput"); } }
 
         /// <summary>
         /// Basic run-time error checking (/RTC)
         /// </summary>
-        public RuntimeCheckType BasicRuntimeChecks { get { return Get<RuntimeCheckType>("BasicRuntimeChecks"); } set { Set("BasicRuntimeChecks", value); } } 
+        public RuntimeCheckType BasicRuntimeChecks { get { return Get<RuntimeCheckType>("BasicRuntimeChecks"); } set { Set("BasicRuntimeChecks", value); } }
         public bool IsBasicRuntimeChecksSpecified { get { return IsSpecified("BasicRuntimeChecks"); } }
 
         /// <summary>
@@ -125,14 +125,14 @@ namespace Bari.Plugins.VCpp.Model
         /// 
         /// <para>If <c>null</c>, no browse information file will be created.</para>
         /// </summary>
-        public string BrowseInformationFile { get { return Get<string>("BrowseInformationFile"); } set { Set("BrowseInformationFile", value); } } 
+        public string BrowseInformationFile { get { return Get<string>("BrowseInformationFile"); } set { Set("BrowseInformationFile", value); } }
         public bool IsBrowseInformationFileSpecified { get { return IsSpecified("BrowseInformationFile"); } }
 
         /// <summary>
         /// If true, detects some buffer overruns that overwrite the return address, 
         /// a common technique for exploiting code that does not enforce buffer size restrictions. (/GS)
         /// </summary>
-        public bool BufferSecurityCheck { get { return Get<bool>("BufferSecurityCheck"); } set { Set("BufferSecurityCheck", value); } } 
+        public bool BufferSecurityCheck { get { return Get<bool>("BufferSecurityCheck"); } set { Set("BufferSecurityCheck", value); } }
         public bool IsBufferSecurityCheckSpecified { get { return IsSpecified("BufferSecurityCheck"); } }
 
         /// <summary>
@@ -142,211 +142,211 @@ namespace Bari.Plugins.VCpp.Model
         /// Supported values: Cdecl, FastCall or StdCall
         /// </para>
         /// </summary>
-        public CallingConvention CallingConvention { get { return Get<CallingConvention>("CallingConvention"); } set { Set("CallingConvention", value); } } 
+        public CallingConvention CallingConvention { get { return Get<CallingConvention>("CallingConvention"); } set { Set("CallingConvention", value); } }
         public bool IsCallingConventionSpecified { get { return IsSpecified("CallingConvention"); } }
 
         /// <summary>
         /// Compile as C or C++ (/TC, /TP)
         /// </summary>
-        public CLanguage CompileAs { get { return Get<CLanguage>("CompileAs"); } set { Set("CompileAs", value); } } 
+        public CLanguage CompileAs { get { return Get<CLanguage>("CompileAs"); } set { Set("CompileAs", value); } }
         public bool IsCompileAsSpecified { get { return IsSpecified("CompileAs"); } }
 
         /// <summary>
         /// Enables or disables managed C++ (C++/CLI) compilation (/clr)
         /// </summary>
-        public ManagedCppType CompileAsManaged { get { return Get<ManagedCppType>("CompileAsManaged"); } set { Set("CompileAsManaged", value); } } 
+        public ManagedCppType CompileAsManaged { get { return Get<ManagedCppType>("CompileAsManaged"); } set { Set("CompileAsManaged", value); } }
         public bool IsCompileAsManagedSpecified { get { return IsSpecified("CompileAsManaged"); } }
 
         /// <summary>
         /// If <c>true</c>, the compiler prepares the image for hot patching (/hotpatch)
         /// </summary>
-        public bool CreateHotpatchableImage { get { return Get<bool>("CreateHotpatchableImage"); } set { Set("CreateHotpatchableImage", value); } } 
+        public bool CreateHotpatchableImage { get { return Get<bool>("CreateHotpatchableImage"); } set { Set("CreateHotpatchableImage", value); } }
         public bool IsCreateHotpatchableImageSpecified { get { return IsSpecified("CreateHotpatchableImage"); } }
 
         /// <summary>
         /// Selects the debugging information format
         /// </summary>
-        public DebugInformationFormat DebugInformationFormat { get { return Get<DebugInformationFormat>("DebugInformationFormat"); } set { Set("DebugInformationFormat", value); } } 
+        public DebugInformationFormat DebugInformationFormat { get { return Get<DebugInformationFormat>("DebugInformationFormat"); } set { Set("DebugInformationFormat", value); } }
         public bool IsDebugInformationFormatSpecified { get { return IsSpecified("DebugInformationFormat"); } }
 
         /// <summary>
         /// Force ANSI C++ (/Za)
         /// </summary>
-        public bool DisableLanguageExtensions { get { return Get<bool>("DisableLanguageExtensions"); } set { Set("DisableLanguageExtensions", value); } } 
+        public bool DisableLanguageExtensions { get { return Get<bool>("DisableLanguageExtensions"); } set { Set("DisableLanguageExtensions", value); } }
         public bool IsDisableLanguageExtensionsSpecified { get { return IsSpecified("DisableLanguageExtensions"); } }
 
         /// <summary>
         /// Set of disabled warnings (/wd)
         /// </summary>
-        public int[] SuppressedWarnings { get { return Get<int[]>("SuppressedWarnings"); } set { Set("SuppressedWarnings", value); } } 
+        public int[] SuppressedWarnings { get { return Get<int[]>("SuppressedWarnings"); } set { Set("SuppressedWarnings", value); } }
         public bool AreSuppressedWarningsSpecified { get { return IsSpecified("SuppressedWarnings"); } }
 
         /// <summary>
         /// Enable enhanced instruction set (/arch)
         /// </summary>
-        public EnhancedInstructionSet EnableEnhancedInstructionSet { get { return Get<EnhancedInstructionSet>("EnableEnhancedInstructionSet"); } set { Set("EnableEnhancedInstructionSet", value); } } 
+        public EnhancedInstructionSet EnableEnhancedInstructionSet { get { return Get<EnhancedInstructionSet>("EnableEnhancedInstructionSet"); } set { Set("EnableEnhancedInstructionSet", value); } }
         public bool IsEnableEnhancedInstructionSetSpecified { get { return IsSpecified("EnableEnhancedInstructionSet"); } }
 
         /// <summary>
         /// Fiber safety for TLS (/GT)
         /// </summary>
-        public bool EnableFiberSafeOptimizations { get { return Get<bool>("EnableFiberSafeOptimizations"); } set { Set("EnableFiberSafeOptimizations", value); } } 
+        public bool EnableFiberSafeOptimizations { get { return Get<bool>("EnableFiberSafeOptimizations"); } set { Set("EnableFiberSafeOptimizations", value); } }
         public bool IsEnableFiberSafeOptimizationsSpecified { get { return IsSpecified("EnableFiberSafeOptimizations"); } }
 
         /// <summary>
         /// Enable code analysis (PREfast, /analyze)
         /// </summary>
-        public bool CodeAnalysis { get { return Get<bool>("CodeAnalysis"); } set { Set("CodeAnalysis", value); } } 
+        public bool CodeAnalysis { get { return Get<bool>("CodeAnalysis"); } set { Set("CodeAnalysis", value); } }
         public bool IsCodeAnalysisSpecified { get { return IsSpecified("CodeAnalysis"); } }
 
         /// <summary>
         /// Exception handling model (/EH)
         /// </summary>
-        public ExceptionHandlingType ExceptionHandling { get { return Get<ExceptionHandlingType>("ExceptionHandling"); } set { Set("ExceptionHandling", value); } } 
+        public ExceptionHandlingType ExceptionHandling { get { return Get<ExceptionHandlingType>("ExceptionHandling"); } set { Set("ExceptionHandling", value); } }
         public bool IsExceptionHandlingSpecified { get { return IsSpecified("ExceptionHandling"); } }
 
         /// <summary>
         /// If <c>true</c>, creates a listing with attributes injected in expanded form to the source (/Fx)
         /// </summary>
-        public bool ExpandAttributedSource { get { return Get<bool>("ExpandAttributedSource"); } set { Set("ExpandAttributedSource", value); } } 
+        public bool ExpandAttributedSource { get { return Get<bool>("ExpandAttributedSource"); } set { Set("ExpandAttributedSource", value); } }
         public bool IsExpandAttributedSourceSpecified { get { return IsSpecified("ExpandAttributedSource"); } }
 
         /// <summary>
         /// Sets the optimization favor
         /// </summary>
-        public OptimizationFavor Favor { get { return Get<OptimizationFavor>("Favor"); } set { Set("Favor", value); } } 
+        public OptimizationFavor Favor { get { return Get<OptimizationFavor>("Favor"); } set { Set("Favor", value); } }
         public bool IsFavorSpecified { get { return IsSpecified("Favor"); } }
 
         /// <summary>
         /// Enable reliable floating-point exception model (/fp:except)
         /// </summary>
-        public bool FloatingPointExceptions { get { return Get<bool>("FloatingPointExceptions"); } set { Set("FloatingPointExceptions", value); } } 
+        public bool FloatingPointExceptions { get { return Get<bool>("FloatingPointExceptions"); } set { Set("FloatingPointExceptions", value); } }
         public bool IsFloatingPointExceptionsSpecified { get { return IsSpecified("FloatingPointExceptions"); } }
 
         /// <summary>
         /// Floating point model (/fp)
         /// </summary>
-        public FloatingPointModel FloatingPointModel { get { return Get<FloatingPointModel>("FloatingPointModel"); } set { Set("FloatingPointModel", value); } } 
+        public FloatingPointModel FloatingPointModel { get { return Get<FloatingPointModel>("FloatingPointModel"); } set { Set("FloatingPointModel", value); } }
         public bool IsFloatingPointModelSpecified { get { return IsSpecified("FloatingPointModel"); } }
 
         /// <summary>
         /// Standard C++ behavior in for loops using Microsoft extensions (/Zc:forScope)
         /// </summary>
-        public bool ForceConformanceInForLoopScope { get { return Get<bool>("ForceConformanceInForLoopScope"); } set { Set("ForceConformanceInForLoopScope", value); } } 
+        public bool ForceConformanceInForLoopScope { get { return Get<bool>("ForceConformanceInForLoopScope"); } set { Set("ForceConformanceInForLoopScope", value); } }
         public bool IsForceConformanceInForLoopScopeSpecified { get { return IsSpecified("ForceConformanceInForLoopScope"); } }
 
         /// <summary>
         /// Header files to be processed by the preprocessor (/FI)
         /// </summary>
-        public string[] ForcedIncludeFiles { get { return Get<string[]>("ForcedIncludeFiles"); } set { Set("ForcedIncludeFiles", value); } } 
+        public string[] ForcedIncludeFiles { get { return Get<string[]>("ForcedIncludeFiles"); } set { Set("ForcedIncludeFiles", value); } }
         public bool IsForcedIncludeFilesSpecified { get { return IsSpecified("ForcedIncludeFiles"); } }
 
         /// <summary>
         /// #using files to be processed by the preprocessor (/FU)
         /// </summary>
-        public string[] ForcedUsingFiles { get { return Get<string[]>("ForcedUsingFiles"); } set { Set("ForcedUsingFiles", value); } } 
+        public string[] ForcedUsingFiles { get { return Get<string[]>("ForcedUsingFiles"); } set { Set("ForcedUsingFiles", value); } }
         public bool AreForcedUsingFilesSpecified { get { return IsSpecified("ForcedUsingFiles"); } }
 
         /// <summary>
         /// Package individual functions in the form of packaged functions (COMDATs) (/Gy)
         /// </summary>
-        public bool FunctionLevelLinking { get { return Get<bool>("FunctionLevelLinking"); } set { Set("FunctionLevelLinking", value); } } 
+        public bool FunctionLevelLinking { get { return Get<bool>("FunctionLevelLinking"); } set { Set("FunctionLevelLinking", value); } }
         public bool IsFunctionLevelLinkingSpecified { get { return IsSpecified("FunctionLevelLinking"); } }
 
         /// <summary>
         /// Generate XML documentation .xdc files for each source code file (/doc)
         /// </summary>
-        public bool GenerateXMLDocumentationFiles { get { return Get<bool>("GenerateXMLDocumentationFiles"); } set { Set("GenerateXMLDocumentationFiles", value); } } 
+        public bool GenerateXMLDocumentationFiles { get { return Get<bool>("GenerateXMLDocumentationFiles"); } set { Set("GenerateXMLDocumentationFiles", value); } }
         public bool IsGenerateXMLDocumentationFilesSpecified { get { return IsSpecified("GenerateXMLDocumentationFiles"); } }
 
         /// <summary>
         /// Ignore the standard directories when searching for include files (/X)
         /// </summary>
-        public bool IgnoreStandardIncludePath { get { return Get<bool>("IgnoreStandardIncludePath"); } set { Set("IgnoreStandardIncludePath", value); } } 
+        public bool IgnoreStandardIncludePath { get { return Get<bool>("IgnoreStandardIncludePath"); } set { Set("IgnoreStandardIncludePath", value); } }
         public bool IsIgnoreStandardIncludePathSpecified { get { return IsSpecified("IgnoreStandardIncludePath"); } }
 
         /// <summary>
         /// Sets the inline expansion level (/Ob)
         /// </summary>
-        public InlineExpansion InlineFunctionExpansion { get { return Get<InlineExpansion>("InlineFunctionExpansion"); } set { Set("InlineFunctionExpansion", value); } } 
+        public InlineExpansion InlineFunctionExpansion { get { return Get<InlineExpansion>("InlineFunctionExpansion"); } set { Set("InlineFunctionExpansion", value); } }
         public bool IsInlineFunctionExpansionSpecified { get { return IsSpecified("InlineFunctionExpansion"); } }
 
         /// <summary>
         /// If <c>true</c>, some function calls will be replaced with intrinsic forms (/Oi)
         /// </summary>
-        public bool IntrinsicFunctions { get { return Get<bool>("IntrinsicFunctions"); } set { Set("IntrinsicFunctions", value); } } 
+        public bool IntrinsicFunctions { get { return Get<bool>("IntrinsicFunctions"); } set { Set("IntrinsicFunctions", value); } }
         public bool IsIntrinsicFunctionsSpecified { get { return IsSpecified("IntrinsicFunctions"); } }
 
         /// <summary>
         /// Enables minimal rebuild (/Gm)
         /// </summary>
-        public bool MinimalRebuild { get { return Get<bool>("MinimalRebuild"); } set { Set("MinimalRebuild", value); } } 
+        public bool MinimalRebuild { get { return Get<bool>("MinimalRebuild"); } set { Set("MinimalRebuild", value); } }
         public bool IsMinimalRebuildSpecified { get { return IsSpecified("MinimalRebuild"); } }
 
         /// <summary>
         /// Use multiple processors to compile (/MP)
         /// </summary>
-        public bool MultiProcessorCompilation { get { return Get<bool>("MultiProcessorCompilation"); } set { Set("MultiProcessorCompilation", value); } } 
+        public bool MultiProcessorCompilation { get { return Get<bool>("MultiProcessorCompilation"); } set { Set("MultiProcessorCompilation", value); } }
         public bool IsMultiProcessorCompilationSpecified { get { return IsSpecified("MultiProcessorCompilation"); } }
 
         /// <summary>
         /// Omit the default run time library's name from the generated object files (/Zl)
         /// </summary>
-        public bool OmitDefaultLibName { get { return Get<bool>("OmitDefaultLibName"); } set { Set("OmitDefaultLibName", value); } } 
+        public bool OmitDefaultLibName { get { return Get<bool>("OmitDefaultLibName"); } set { Set("OmitDefaultLibName", value); } }
         public bool IsOmitDefaultLibNameSpecified { get { return IsSpecified("OmitDefaultLibName"); } }
 
         /// <summary>
         /// Suppress creation of frame pointers on the call stack (/Oy)
         /// </summary>
-        public bool OmitFramePointers { get { return Get<bool>("OmitFramePointers"); } set { Set("OmitFramePointers", value); } } 
+        public bool OmitFramePointers { get { return Get<bool>("OmitFramePointers"); } set { Set("OmitFramePointers", value); } }
         public bool IsOmitFramePointersSpecified { get { return IsSpecified("OmitFramePointers"); } }
 
         /// <summary>
         /// Support for OpenMP 2.0 constructs (/openmp)
         /// </summary>
-        public bool OpenMPSupport { get { return Get<bool>("OpenMPSupport"); } set { Set("OpenMPSupport", value); } } 
+        public bool OpenMPSupport { get { return Get<bool>("OpenMPSupport"); } set { Set("OpenMPSupport", value); } }
         public bool IsOpenMPSupportSpecified { get { return IsSpecified("OpenMPSupport"); } }
 
         /// <summary>
         /// Optimization level (/O)
         /// </summary>
-        public OptimizationLevel Optimization { get { return Get<OptimizationLevel>("Optimization"); } set { Set("Optimization", value); } } 
+        public OptimizationLevel Optimization { get { return Get<OptimizationLevel>("Optimization"); } set { Set("Optimization", value); } }
         public bool IsOptimizationSpecified { get { return IsSpecified("Optimization"); } }
 
         /// <summary>
         /// Preprocessor defines (/D)
         /// </summary>
-        public string[] Defines { get { return Get<string[]>("Defines"); } set { Set("Defines", value); } } 
+        public string[] Defines { get { return Get<string[]>("Defines"); } set { Set("Defines", value); } }
         public bool AreDefinesSpecified { get { return IsSpecified("Defines"); } }
 
         /// <summary>
         /// Maximum number of processors to use if <see cref="MultiProcessorCompilation"/> is enabled
         /// </summary>
-        public int? ProcessorNumber { get { return GetAsNullable<int>("ProcessorNumber"); } set { SetAsNullable("ProcessorNumber", value); } } 
+        public int? ProcessorNumber { get { return GetAsNullable<int>("ProcessorNumber"); } set { SetAsNullable("ProcessorNumber", value); } }
         public bool IsProcessorNumberSpecified { get { return IsSpecified("ProcessorNumber"); } }
 
         /// <summary>
         /// The runtime library to use (/MD, /MT, /LD)
         /// </summary>
-        public RuntimeLibraryType RuntimeLibrary { get { return Get<RuntimeLibraryType>("RuntimeLibrary"); } set { Set("RuntimeLibrary", value); } } 
+        public RuntimeLibraryType RuntimeLibrary { get { return Get<RuntimeLibraryType>("RuntimeLibrary"); } set { Set("RuntimeLibrary", value); } }
         public bool IsRuntimeLibrarySpecified { get { return IsSpecified("RuntimeLibrary"); } }
 
         /// <summary>
         /// Add code to check C++ types at runtime (RTI) (/GR)
         /// </summary>
-        public bool RuntimeTypeInfo { get { return Get<bool>("RuntimeTypeInfo"); } set { Set("RuntimeTypeInfo", value); } } 
+        public bool RuntimeTypeInfo { get { return Get<bool>("RuntimeTypeInfo"); } set { Set("RuntimeTypeInfo", value); } }
         public bool IsRuntimeTypeInfoSpecified { get { return IsSpecified("RuntimeTypeInfo"); } }
 
         /// <summary>
         /// Report a runtime error if value is assigned to a smaller data type and causes data loss (/RTCc)
         /// </summary>
-        public bool SmallerTypeCheck { get { return Get<bool>("SmallerTypeCheck"); } set { Set("SmallerTypeCheck", value); } } 
+        public bool SmallerTypeCheck { get { return Get<bool>("SmallerTypeCheck"); } set { Set("SmallerTypeCheck", value); } }
         public bool IsSmallerTypeCheckSpecified { get { return IsSpecified("SmallerTypeCheck"); } }
 
         /// <summary>
         /// Enables string pooling (/GF)
         /// </summary>
-        public bool StringPooling { get { return Get<bool>("StringPooling"); } set { Set("StringPooling", value); } } 
+        public bool StringPooling { get { return Get<bool>("StringPooling"); } set { Set("StringPooling", value); } }
         public bool IsStringPoolingSpecified { get { return IsSpecified("StringPooling"); } }
 
         /// <summary>
@@ -355,48 +355,48 @@ namespace Bari.Plugins.VCpp.Model
         /// <para><c>null</c> means default. Other possible values: 1, 2, 4, 8, 16
         /// </para>
         /// </summary>
-        public int? StructMemberAlignment { get { return GetAsNullable<int>("StructMemberAlignment"); } set { SetAsNullable("StructMemberAlignment", value); } } 
+        public int? StructMemberAlignment { get { return GetAsNullable<int>("StructMemberAlignment"); } set { SetAsNullable("StructMemberAlignment", value); } }
         public bool IsStructMemberAlignmentSpecified { get { return IsSpecified("StructMemberAlignment"); } }
 
-        public bool AllWarningsAsError { get { return Get<bool>("AllWarningsAsError"); } set { Set("AllWarningsAsError", value); } } 
+        public bool AllWarningsAsError { get { return Get<bool>("AllWarningsAsError"); } set { Set("AllWarningsAsError", value); } }
         public bool IsAllWarningsAsErrorSpecified { get { return IsSpecified("AllWarningsAsError"); } }
-        public int[] SpecificWarningsAsError { get { return Get<int[]>("SpecificWarningsAsError"); } set { Set("SpecificWarningsAsError", value); } } 
+        public int[] SpecificWarningsAsError { get { return Get<int[]>("SpecificWarningsAsError"); } set { Set("SpecificWarningsAsError", value); } }
         public bool AreSpecificWarningsAsErrorSpecified { get { return IsSpecified("SpecificWarningsAsError"); } }
 
         /// <summary>
         /// Treat <c>wchar_t</c> as a native type (/Zc:wchar_t)
         /// </summary>
-        public bool TreatWCharTAsBuiltInType { get { return Get<bool>("TreatWCharTAsBuiltInType"); } set { Set("TreatWCharTAsBuiltInType", value); } } 
+        public bool TreatWCharTAsBuiltInType { get { return Get<bool>("TreatWCharTAsBuiltInType"); } set { Set("TreatWCharTAsBuiltInType", value); } }
         public bool IsTreatWCharTAsBuiltInTypeSpecified { get { return IsSpecified("TreatWCharTAsBuiltInType"); } }
 
         /// <summary>
         /// Undefine Microsoft-specific symbols defined by the compiler (/u)
         /// </summary>
-        public bool UndefineAllPreprocessorDefinitions { get { return Get<bool>("UndefineAllPreprocessorDefinitions"); } set { Set("UndefineAllPreprocessorDefinitions", value); } } 
+        public bool UndefineAllPreprocessorDefinitions { get { return Get<bool>("UndefineAllPreprocessorDefinitions"); } set { Set("UndefineAllPreprocessorDefinitions", value); } }
         public bool IsUndefineAllPreprocessorDefinitionsSpecified { get { return IsSpecified("UndefineAllPreprocessorDefinitions"); } }
 
         /// <summary>
         /// A specific set of defines to be undefined (/U)
         /// </summary>
-        public string[] UndefinePreprocessorDefinitions { get { return Get<string[]>("UndefinePreprocessorDefinitions"); } set { Set("UndefinePreprocessorDefinitions", value); } } 
+        public string[] UndefinePreprocessorDefinitions { get { return Get<string[]>("UndefinePreprocessorDefinitions"); } set { Set("UndefinePreprocessorDefinitions", value); } }
         public bool AreUndefinePreprocessorDefinitionsSpecified { get { return IsSpecified("UndefinePreprocessorDefinitions"); } }
 
         /// <summary>
         /// Warning level (/Wn)
         /// </summary>
-        public CppWarningLevel WarningLevel { get { return Get<CppWarningLevel>("WarningLevel"); } set { Set("WarningLevel", value); } } 
+        public CppWarningLevel WarningLevel { get { return Get<CppWarningLevel>("WarningLevel"); } set { Set("WarningLevel", value); } }
         public bool IsWarningLevelSpecified { get { return IsSpecified("WarningLevel"); } }
 
         /// <summary>
         /// Enables whole program optimization (/GL)
         /// </summary>
-        public bool WholeProgramOptimization { get { return Get<bool>("WholeProgramOptimization"); } set { Set("WholeProgramOptimization", value); } } 
+        public bool WholeProgramOptimization { get { return Get<bool>("WholeProgramOptimization"); } set { Set("WholeProgramOptimization", value); } }
         public bool IsWholeProgramOptimizationSpecified { get { return IsSpecified("WholeProgramOptimization"); } }
 
         /// <summary>
         /// Name of the PDB file to be generated
         /// </summary>
-        public string PDBFileName { get { return Get<string>("PDBFileName"); } set { Set("PDBFileName", value); } } 
+        public string PDBFileName { get { return Get<string>("PDBFileName"); } set { Set("PDBFileName", value); } }
         public bool IsPDBFileNameSpecified { get { return IsSpecified("PDBFileName"); } }
 
         public FrameworkVersion TargetFrameworkVersion
@@ -430,7 +430,7 @@ namespace Bari.Plugins.VCpp.Model
                                             project.Module.Name, project.Name,
                                             Path.DirectorySeparatorChar);
             }
-
+            
             if (cliMode != CppCliMode.Disabled)
             {
                 // Fixing some settings to support C++/CLI mode
@@ -579,7 +579,15 @@ namespace Bari.Plugins.VCpp.Model
             var targetFrameworkVersion = IsTargetFrameworkVersionSpecified
                 ? TargetFrameworkVersion
                 : FrameworkVersion.v4;
-            writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(targetFrameworkVersion));
+
+            if (targetFrameworkVersion >= FrameworkVersion.v6)
+            {
+                writer.WriteElementString("TargetFramework", ToTargetFramework(targetFrameworkVersion));
+            }
+            else
+            {
+                writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(targetFrameworkVersion));
+            }
 
             var targetFrameworkProfile = IsTargetFrameworkProfileSpecified
                 ? TargetFrameworkProfile
@@ -672,6 +680,27 @@ namespace Bari.Plugins.VCpp.Model
                     return "v4.7.2";
                 case FrameworkVersion.v48:
                     return "v4.8";
+                case FrameworkVersion.v6:
+                    return "v6.0";
+                case FrameworkVersion.v7:
+                    return "v7.0";
+                case FrameworkVersion.v8:
+                    return "v8.0";
+                default:
+                    throw new ArgumentOutOfRangeException("targetFrameworkVersion");
+            }
+        }
+
+        private string ToTargetFramework(FrameworkVersion targetFrameworkVersion)
+        {
+            switch (targetFrameworkVersion)
+            {
+                case FrameworkVersion.v6:
+                    return "net6.0";
+                case FrameworkVersion.v7:
+                    return "net7.0";
+                case FrameworkVersion.v8:
+                    return "net8.0";
                 default:
                     throw new ArgumentOutOfRangeException("targetFrameworkVersion");
             }

@@ -16,6 +16,7 @@ namespace Bari.Plugins.Nuget.Packager
         private Uri iconUrl;
         private bool packageAsTool;
         private string apiKey;
+        private bool packageReference;
 
         public string Id
         {
@@ -75,6 +76,12 @@ namespace Bari.Plugins.Nuget.Packager
         {
             get { return apiKey; }
             set { apiKey = value; }
+        }
+
+        public bool PackageReference
+        {
+            get { return packageReference; }
+            set { packageReference = value; }
         }
     }
 }
