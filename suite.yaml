@@ -177,6 +177,12 @@ modules:
             - alias://ninject
             - suite://core/Bari.Core
             - suite://dotnetplugins/Bari.Plugins.Nuget
+        - name: Bari.Plugins.dotnet
+          references:
+            - alias://common
+            - alias://logging
+            - alias://ninject
+            - suite://core/Bari.Core
         - name: Bari.Plugins.CodeContracts
           references:
             - alias://common
