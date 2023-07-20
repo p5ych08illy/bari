@@ -12,9 +12,9 @@ namespace Bari.Plugins.Fsharp.VisualStudio
     {
         public static bool IsSDKProject(this Project project)
         {
-            var csharpParams = project.GetInheritableParameters<FsharpProjectParameters, FsharpProjectParametersDef>("fsharp");
-            var frameworkVersion = csharpParams.IsTargetFrameworkVersionSpecified
-                    ? csharpParams.TargetFrameworkVersion
+            var fsharpParams = project.GetInheritableParameters<FsharpProjectParameters, FsharpProjectParametersDef>("fsharp");
+            var frameworkVersion = fsharpParams.IsTargetFrameworkVersionSpecified
+                    ? fsharpParams.TargetFrameworkVersion
                     : FrameworkVersion.v4;
 
             return frameworkVersion >= FrameworkVersion.v6;

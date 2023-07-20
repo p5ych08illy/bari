@@ -464,34 +464,6 @@ namespace Bari.Plugins.Csharp.Model
         {
             switch (frameworkVersion)
             {
-                case FrameworkVersion.v20:
-                    return "net20";
-                case FrameworkVersion.v30:
-                    return "net30";
-                case FrameworkVersion.v35:
-                    return "net35";
-                case FrameworkVersion.v4:
-                    return "net40";
-                case FrameworkVersion.v45:
-                    return "net45";
-                case FrameworkVersion.v451:
-                    return "net451";
-                case FrameworkVersion.v452:
-                    return "net452";
-                case FrameworkVersion.v46:
-                    return "net46";
-                case FrameworkVersion.v461:
-                    return "net461";
-                case FrameworkVersion.v462:
-                    return "net462";
-                case FrameworkVersion.v47:
-                    return "net47";
-                case FrameworkVersion.v471:
-                    return "net471";
-                case FrameworkVersion.v472:
-                    return "net472";
-                case FrameworkVersion.v48:
-                    return "net48";
                 case FrameworkVersion.v6:
                     return "net6.0";
                 case FrameworkVersion.v7:

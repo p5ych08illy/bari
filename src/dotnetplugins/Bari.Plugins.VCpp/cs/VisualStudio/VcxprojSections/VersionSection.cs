@@ -28,11 +28,11 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
         {
             if (context.VersionOutput != null && project.GetVersionSupport())
             {
-                // Generating the version file (C# source code)
+                // Generating the version file (C++ source code)
                 var generator = new CppVersionInfoGenerator(project);
                 generator.Generate(context.VersionOutput);
 
-                // Adding reference to it to the .csproj file
+                // Adding reference to it to the .vcxproj file
                 writer.WriteStartElement("ItemGroup");
                 writer.WriteStartElement("ClCompile");
                 writer.WriteAttributeString("Include", Path.Combine("..", context.VersionFileName));
