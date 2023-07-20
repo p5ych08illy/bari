@@ -430,7 +430,7 @@ namespace Bari.Plugins.VCpp.Model
                                             project.Module.Name, project.Name,
                                             Path.DirectorySeparatorChar);
             }
-            
+
             if (cliMode != CppCliMode.Disabled)
             {
                 // Fixing some settings to support C++/CLI mode
@@ -480,7 +480,7 @@ namespace Bari.Plugins.VCpp.Model
             }
         }
 
-        public void ToVcxprojProperties(XmlWriter writer)
+        public void ToVcxprojProperties(Project project, XmlWriter writer)
         {
             if (AreAdditionalIncludeDirectoriesSpecified && AdditionalIncludeDirectories.Length > 0)
                 writer.WriteElementString("AdditionalIncludeDirectories", string.Join(";", AdditionalIncludeDirectories));
@@ -499,7 +499,9 @@ namespace Bari.Plugins.VCpp.Model
             writer.WriteElementString("CallingConvention", (IsCallingConventionSpecified ? CallingConvention : CallingConvention.Cdecl).ToString());
             if (IsCompileAsSpecified && CompileAs != CLanguage.Default)
                 writer.WriteElementString("CompileAs", CompileAs.ToString());
-            writer.WriteElementString("CompileAsManaged", CompileAsManagedToString(IsCompileAsManagedSpecified ? CompileAsManaged : ManagedCppType.NotManaged));
+            var compilerParameters = project.GetInheritableParameters<VCppProjectCompilerParameters, VCppProjectCompilerParametersDef>("cpp-compiler");
+            if (!compilerParameters.IsTargetFrameworkVersionSpecified || compilerParameters.TargetFrameworkVersion < VsCore.Model.FrameworkVersion.v6)
+                writer.WriteElementString("CompileAsManaged", CompileAsManagedToString(IsCompileAsManagedSpecified ? CompileAsManaged : ManagedCppType.NotManaged));
             writer.WriteElementString("CreateHotpatchableImage", XmlConvert.ToString(IsCreateHotpatchableImageSpecified && CreateHotpatchableImage));
             if (IsDebugInformationFormatSpecified && DebugInformationFormat != DebugInformationFormat.None)
                 writer.WriteElementString("DebugInformationFormat", DebugInformationFormat.ToString());
@@ -582,7 +584,8 @@ namespace Bari.Plugins.VCpp.Model
 
             if (targetFrameworkVersion >= FrameworkVersion.v6)
             {
-                writer.WriteElementString("TargetFramework", ToTargetFramework(targetFrameworkVersion));
+                writer.WriteElementString("TargetFramework", ToTargetFramework(targetFrameworkVersion) + "-windows");
+                writer.WriteElementString("ManagedAssembly", "true");
             }
             else
             {
@@ -680,12 +683,6 @@ namespace Bari.Plugins.VCpp.Model
                     return "v4.7.2";
                 case FrameworkVersion.v48:
                     return "v4.8";
-                case FrameworkVersion.v6:
-                    return "v6.0";
-                case FrameworkVersion.v7:
-                    return "v7.0";
-                case FrameworkVersion.v8:
-                    return "v8.0";
                 default:
                     throw new ArgumentOutOfRangeException("targetFrameworkVersion");
             }

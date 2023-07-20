@@ -243,7 +243,7 @@ namespace Bari.Plugins.VCpp.VisualStudio.VcxprojSections
             compilerParameters.FillProjectSpecificMissingInfo(project, project.GetCLIMode(), targetDir as LocalFileSystemDirectory);
 
             writer.WriteStartElement("ClCompile");
-            compilerParameters.ToVcxprojProperties(writer);
+            compilerParameters.ToVcxprojProperties(project, writer);
 
             if (project.GetSourceSet("cpp").Files.Any(file => Path.GetFileName(file) == "stdafx.cpp"))
                 writer.WriteElementString("PrecompiledHeader", "Use");
