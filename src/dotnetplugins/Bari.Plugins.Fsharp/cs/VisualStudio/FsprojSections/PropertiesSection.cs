@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Xml;
 using Bari.Core.Generic;
@@ -51,6 +51,10 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
             writer.WriteStartElement("PropertyGroup");
             WriteConfigurationSpecificPart(writer, project);
 
+            //Nuget lock file
+            writer.WriteElementString("RestorePackagesWithLockFile", "true");
+            writer.WriteElementString("RestoreLockedMode", "true");
+
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
@@ -64,6 +68,7 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
                 writer.WriteElementString("AppendTargetFrameworkToOutputPath", "false");
                 writer.WriteElementString("AppendRuntimeIdentifierToOutputPath", "false");
                 writer.WriteElementString("ProduceReferenceAssemblyInOutDir", "true");
+                writer.WriteElementString("RestoreProjectStyle", "PackageReference");
             }
 
             FsharpProjectParameters parameters =
@@ -86,6 +91,7 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
                     "fs");
 
             writer.WriteElementString("IntermediateOutputPath", tmpFolder);
+            writer.WriteElementString("NuGetLockFilePath", Path.Combine(tmpFolder, string.Format("packages.{0}.lock.json", project.Name)));
         }
 
         private string GetOutputType(ProjectType type)
