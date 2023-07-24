@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Xml;
 using Bari.Core.Generic;
@@ -47,7 +47,6 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
                 writer.WriteEndElement();
             }
 
-
             writer.WriteStartElement("PropertyGroup");
             WriteConfigurationSpecificPart(writer, project);
 
@@ -69,6 +68,7 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
                 writer.WriteElementString("AppendRuntimeIdentifierToOutputPath", "false");
                 writer.WriteElementString("ProduceReferenceAssemblyInOutDir", "true");
                 writer.WriteElementString("RestoreProjectStyle", "PackageReference");
+                writer.WriteElementString("CopyLocalLockFileAssemblies", "true");
             }
 
             FsharpProjectParameters parameters =

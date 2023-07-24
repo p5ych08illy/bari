@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -95,7 +95,8 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 writer.WriteElementString("AppendRuntimeIdentifierToOutputPath", "false");
                 writer.WriteElementString("EnableDefaultApplicationDefinition", "false");
                 writer.WriteElementString("RestoreProjectStyle", "PackageReference");
-                
+                writer.WriteElementString("CopyLocalLockFileAssemblies", "true");
+
                 if ((parameters.IsUseWinFormsSpecified && parameters.UseWinForms) || (parameters.IsUseWPFSpecified && parameters.UseWPF))
                     writer.WriteElementString("RuntimeIdentifier", "win-" + (Suite.ActiveGoal.Has("x64") ? "x64" : "x86"));
                 else if (parameters.IsTargetOSSpecified)
