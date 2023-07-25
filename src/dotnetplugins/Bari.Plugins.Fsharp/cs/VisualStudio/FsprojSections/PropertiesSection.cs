@@ -52,7 +52,6 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
 
             //Nuget lock file
             writer.WriteElementString("RestorePackagesWithLockFile", "true");
-            writer.WriteElementString("RestoreLockedMode", "true");
 
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("AssemblyName", project.Name);

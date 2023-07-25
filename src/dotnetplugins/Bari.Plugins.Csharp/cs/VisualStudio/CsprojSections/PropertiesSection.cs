@@ -70,7 +70,6 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 
             //Nuget lock file
             writer.WriteElementString("RestorePackagesWithLockFile", "true");
-            writer.WriteElementString("RestoreLockedMode", "true");
 
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("AssemblyName", project.Name);
@@ -96,6 +95,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 writer.WriteElementString("EnableDefaultApplicationDefinition", "false");
                 writer.WriteElementString("RestoreProjectStyle", "PackageReference");
                 writer.WriteElementString("CopyLocalLockFileAssemblies", "true");
+                writer.WriteElementString("AccelerateBuildsInVisualStudio", "true");
 
                 if ((parameters.IsUseWinFormsSpecified && parameters.UseWinForms) || (parameters.IsUseWPFSpecified && parameters.UseWPF))
                     writer.WriteElementString("RuntimeIdentifier", "win-" + (Suite.ActiveGoal.Has("x64") ? "x64" : "x86"));
