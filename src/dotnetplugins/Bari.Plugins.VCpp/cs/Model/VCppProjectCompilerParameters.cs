@@ -425,8 +425,9 @@ namespace Bari.Plugins.VCpp.Model
         {
             if (targetDir != null)
             {
+                var tempFolder = suite.SuiteRoot.GetRelativePathFrom(project.RootDirectory.GetChildDirectory("cpp"), Path.Combine(suite.SuiteRoot.GetRelativePath(targetDir), "tmp", project.Module.Name, project.Name));
                 PDBFileName = string.Format("{0}{3}{1}.{2}.pdb",
-                                            targetDir.AbsolutePath,
+                                            tempFolder,
                                             project.Module.Name, project.Name,
                                             Path.DirectorySeparatorChar);
             }
@@ -573,7 +574,8 @@ namespace Bari.Plugins.VCpp.Model
             WriteStringArray(writer, "UndefinePreprocessorDefinitions", AreUndefinePreprocessorDefinitionsSpecified ? UndefinePreprocessorDefinitions : new string[0]);
             writer.WriteElementString("WarningLevel", WarningLevelToString(IsWarningLevelSpecified ? WarningLevel : CppWarningLevel.All));
             writer.WriteElementString("WholeProgramOptimization", XmlConvert.ToString(IsWholeProgramOptimizationSpecified ? WholeProgramOptimization : suite.ActiveGoal.Has(Suite.ReleaseGoal.Name)));
-            writer.WriteElementString("ProgramDataBaseFileName", PDBFileName);
+            if (IsPDBFileNameSpecified)
+                writer.WriteElementString("ProgramDataBaseFileName", PDBFileName);
         }
 
         public void WriteGlobalProperties(XmlWriter writer)
