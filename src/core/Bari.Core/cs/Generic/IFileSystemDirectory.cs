@@ -141,6 +141,12 @@ namespace Bari.Core.Generic
         /// Ensures that all requested file information will be up to date
         /// </summary>
         void InvalidateCacheFileData();
+
+
+        /// <summary>
+        /// Ensures that all requested file information will be up to date
+        /// </summary>
+        void InvalidateCacheFileData(string path);
     }
 
     /// <summary>
@@ -362,5 +368,7 @@ namespace Bari.Core.Generic
         }
 
         public abstract void InvalidateCacheFileData();
+
+        public abstract void InvalidateCacheFileData(string path);
     }
 }

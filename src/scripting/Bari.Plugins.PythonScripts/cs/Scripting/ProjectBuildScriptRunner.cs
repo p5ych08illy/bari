@@ -6,6 +6,7 @@ using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.UI;
 using Bari.Plugins.PythonScripts.Exceptions;
+using Castle.Core.Internal;
 using IronPython.Compiler;
 using IronPython.Runtime;
 using Microsoft.Scripting;
@@ -51,7 +52,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
         public ISet<TargetRelativePath> Run(Project project, IBuildScript buildScript)
         {
             var engine = CreateEngine();
-            
+
             var runtime = engine.Runtime;
             try
             {
@@ -61,7 +62,7 @@ namespace Bari.Plugins.PythonScripts.Scripting
                 scope.SetVariable("project", project);
                 scope.SetVariable("sourceSet",
                                   project.GetSourceSet(buildScript.SourceSetName)
-                                         .Files.Select(srp => (string) srp)
+                                         .Files.Select(srp => (string)srp)
                                          .ToList());
                 AddGetToolToScope(scope, project);
 
@@ -82,10 +83,18 @@ namespace Bari.Plugins.PythonScripts.Scripting
                         script.Compile(pco);
                         script.Execute(scope);
 
-                        return new HashSet<TargetRelativePath>(
+                        var results = new HashSet<TargetRelativePath>(
                             scope.GetVariable<IList<object>>("results")
                                 .Cast<string>()
                                 .Select(t => GetTargetRelativePath(targetDir, t)));
+
+                        results.ForEach(r =>
+                        {
+                            localTargetRoot.InvalidateCacheFileData(r);
+                            localTargetDir.InvalidateCacheFileData(r);
+                        });
+
+                        return results;
                     }
                     catch (Exception ex)
                     {

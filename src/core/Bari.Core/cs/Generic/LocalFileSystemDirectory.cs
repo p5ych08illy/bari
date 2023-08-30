@@ -358,6 +358,13 @@ namespace Bari.Core.Generic
                 fileInfos.Value.Invalidate();
         }
 
+        public void InvalidateCacheFileData(string relativePath)
+        {
+            var absolutePath = Path.Combine(path, relativePath);
+            if (fileInfos.IsValueCreated)
+                fileInfos.Value.Invalidate(absolutePath);
+        }
+
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>

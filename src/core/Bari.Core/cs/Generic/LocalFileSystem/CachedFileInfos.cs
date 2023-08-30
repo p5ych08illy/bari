@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Bari.Core.Generic.LocalFileSystem
@@ -22,6 +23,11 @@ namespace Bari.Core.Generic.LocalFileSystem
         public void Invalidate()
         {
             fileInfos.Clear();
+        }
+
+        internal void Invalidate(string path)
+        {
+            fileInfos.Remove(path);
         }
     }
 }
