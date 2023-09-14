@@ -11,6 +11,7 @@ using Moq;
 using Ninject;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 namespace Bari.Plugins.AddonSupport.Test.Model
 {
@@ -77,8 +78,8 @@ products:
             var suite = loader.Load(yaml);
 
             var p = suite.GetProduct("testproduct").GetParameters<StartupModuleParameters>("startup");
-            p.Project.Should().NotBeNull();
-            p.Project.Name.Should().Be("Project22");
+            p.Projects.ToList()[0].Should().NotBeNull();
+            p.Projects.ToList()[0].Name.Should().Be("Project22");
         }
 
         [Test]
@@ -114,8 +115,8 @@ products:
             var suite = loader.Load(yaml);
 
             var p = suite.GetProduct("testproduct").GetParameters<StartupModuleParameters>("startup");
-            p.Project.Should().NotBeNull();
-            p.Project.Name.Should().Be("Project22");
+            p.Projects.ToList()[0].Should().NotBeNull();
+            p.Projects.ToList()[0].Name.Should().Be("Project22");
         }
     }
 }

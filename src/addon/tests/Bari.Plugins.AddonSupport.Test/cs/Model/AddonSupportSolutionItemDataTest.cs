@@ -84,7 +84,7 @@ namespace Bari.Plugins.AddonSupport.Test.Model
             var alternativeExe = mod2.GetProject("AlternativeExe");
             alternativeExe.Type = ProjectType.WindowsExecutable;
             product.AddModule(mod2);
-            product.AddParameters("startup", new StartupModuleParameters(alternativeExe));
+            product.AddParameters("startup", new StartupModuleParameters(new[] { alternativeExe }));
 
             targetParser.Setup(p => p.ParseTarget(It.IsAny<string>())).Returns(new ProductTarget(product));
             data.StartupPath.Should().Be(Path.Combine("TestModule2", "AlternativeExe.exe"));

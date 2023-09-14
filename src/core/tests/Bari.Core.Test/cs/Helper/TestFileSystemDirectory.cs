@@ -250,6 +250,10 @@ namespace Bari.Core.Test.Helper
         {
         }
 
+        public void InvalidateCacheFileData(string path)
+        {
+        }
+
         public TestFileSystemDirectory(string name, params TestFileSystemDirectory[] childDirs)
         {
             this.name = name;
