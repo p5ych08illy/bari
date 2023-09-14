@@ -83,6 +83,7 @@ namespace Bari.Core.Model.Loader
             suite.Name = parser.GetScalarValue(yaml.RootNode, "suite", "Error reading the name of the suite");
             suite.Version = ParseVersion(parser.GetOptionalScalarValue(yaml.RootNode, "version", null));
             suite.Copyright = parser.GetOptionalScalarValue(yaml.RootNode, "copyright", null);
+            suite.Company = parser.GetOptionalScalarValue(yaml.RootNode, "company", null);
 
             LoadParameters(suite, suite, yaml.RootNode);
 
@@ -313,6 +314,7 @@ namespace Bari.Core.Model.Loader
 
             LoadModuleVersion(module, moduleNode);
             LoadModuleCopyright(module, moduleNode);
+            LoadModuleCompany(module, moduleNode);
             LoadParameters(module.Suite, module, moduleNode);
             LoadProjects(module, moduleNode);
             LoadTestProjects(module, moduleNode);
@@ -327,6 +329,11 @@ namespace Bari.Core.Model.Loader
         private void LoadModuleCopyright(Module module, YamlNode moduleNode)
         {
             module.Copyright = parser.GetOptionalScalarValue(moduleNode, "copyright", null);
+        }
+
+        private void LoadModuleCompany(Module module, YamlNode moduleNode)
+        {
+            module.Company = parser.GetOptionalScalarValue(moduleNode, "company", null);
         }
 
         private void LoadTestProjects(Module module, YamlNode moduleNode)
@@ -375,6 +382,10 @@ namespace Bari.Core.Model.Loader
                     else if (new YamlScalarNode("copyright").Equals(pair.Key) && pair.Value is YamlScalarNode)
                     {
                         project.Copyright = ((YamlScalarNode)pair.Value).Value;
+                    }
+                    else if (new YamlScalarNode("company").Equals(pair.Key) && pair.Value is YamlScalarNode)
+                    {
+                        project.Company = ((YamlScalarNode)pair.Value).Value;
                     }
                     else if (new YamlScalarNode("references").Equals(pair.Key) &&
                         pair.Value is YamlSequenceNode)

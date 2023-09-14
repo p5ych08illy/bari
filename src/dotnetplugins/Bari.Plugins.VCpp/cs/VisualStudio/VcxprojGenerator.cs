@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Plugins.VCpp.Model;
 using Bari.Plugins.VsCore.VisualStudio;
 using Bari.Plugins.VsCore.VisualStudio.ProjectSections;
 
@@ -12,7 +13,7 @@ namespace Bari.Plugins.VCpp.VisualStudio
     /// <summary>
     /// Class generating .vcxproj project files
     /// </summary>
-    public class VcxprojGenerator: IMSBuildProjectGeneratorContext
+    public class VcxprojGenerator : IMSBuildProjectGeneratorContext
     {
         private readonly IEnumerable<IMSBuildProjectSection> sections;
         private ISet<TargetRelativePath> references;
@@ -48,7 +49,7 @@ namespace Bari.Plugins.VCpp.VisualStudio
         /// </summary>
         /// <param name="sections">Vcxproj section writers to be used</param>
         public VcxprojGenerator(IEnumerable<IMSBuildProjectSection> sections)
-        {            
+        {
             this.sections = sections;
         }
 
@@ -77,7 +78,12 @@ namespace Bari.Plugins.VCpp.VisualStudio
 
             writer.WriteProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
             writer.WriteStartElement("Project", "http://schemas.microsoft.com/developer/msbuild/2003");
-            writer.WriteAttributeString("ToolsVersion", "4.0");
+
+            var compilerParameters = project.GetInheritableParameters<VCppProjectCompilerParameters, VCppProjectCompilerParametersDef>("cpp-compiler");
+            if (!compilerParameters.IsTargetFrameworkVersionSpecified || compilerParameters.TargetFrameworkVersion < VsCore.Model.FrameworkVersion.v6)
+            {
+                writer.WriteAttributeString("ToolsVersion", "4.0");
+            }
             writer.WriteAttributeString("DefaultTargets", "Build");
 
             writer.WriteStartElement("Import");

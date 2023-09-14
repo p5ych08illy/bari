@@ -48,7 +48,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
             {
                 if (IsSolutionReference(refPath))
                 {
-                    var moduleAndprojectName = ((string) refPath).Substring(4);
+                    var moduleAndprojectName = ((string)refPath).Substring(4);
                     var parts = moduleAndprojectName.Split('#');
                     var moduleName = parts[0];
                     var projectName = parts[1];
@@ -69,6 +69,8 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                                 Suite.SuiteRoot.GetRelativePathFrom(
                                     project.RootDirectory.GetChildDirectory(
                                         project.RootDirectory.ChildDirectories.First()), projectPath));
+                            writer.WriteElementString("Project", projectGuidManagement.GetGuid(referredProject).ToString("B"));
+                            writer.WriteElementString("Name", referredProject.Name);
                             writer.WriteEndElement();
                         }
                         else
@@ -84,12 +86,21 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
                         }
                     }
                 }
+                else if (IsNugetReference(refPath))
+                {
+                    writer.WriteStartElement("PackageReference");
+                    var assemblyName = ((string)refPath).Substring(3).Split(Path.DirectorySeparatorChar)[1];
+                    var version = ((string)refPath).Substring(3).Split(Path.DirectorySeparatorChar)[0];
+                    writer.WriteAttributeString("Include", assemblyName);
+                    writer.WriteAttributeString("Version", version);
+                    writer.WriteEndElement();
+                }
                 else
                 {
                     writer.WriteStartElement("Reference");
                     if (IsGACReference(refPath))
                     {
-                        var assemblyName = ((string) refPath).Substring(4);
+                        var assemblyName = ((string)refPath).Substring(4);
                         writer.WriteAttributeString("Include", assemblyName);
                     }
                     else
@@ -106,6 +117,11 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
             }
 
             writer.WriteEndElement();
+        }
+
+        private static bool IsNugetReference(TargetRelativePath refPath)
+        {
+            return ((string)refPath).StartsWith("NU!");
         }
 
         private static bool IsSolutionReference(TargetRelativePath refPath)
@@ -126,7 +142,7 @@ namespace Bari.Plugins.VsCore.VisualStudio.ProjectSections
 
         private bool IsValidReference(TargetRelativePath reference)
         {
-            if (IsGACReference(reference) || IsSolutionReference(reference))
+            if (IsGACReference(reference) || IsSolutionReference(reference) || IsNugetReference(reference))
                 return true;
             else
             {

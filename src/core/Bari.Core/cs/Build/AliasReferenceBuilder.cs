@@ -6,6 +6,7 @@ using Bari.Core.Build.Cache;
 using Bari.Core.Build.Dependencies;
 using Bari.Core.Generic;
 using Bari.Core.Model;
+using Bari.Core.UI;
 
 namespace Bari.Core.Build
 {
@@ -19,12 +20,13 @@ namespace Bari.Core.Build
         private readonly Suite suite;
         private readonly Project project;
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
+        private readonly IUserOutput output;
         private readonly IList<IBuilder> builders = new List<IBuilder>();
         private Reference reference;
         private ReferenceAlias alias;
         private bool buildersReady;
 
-        public AliasReferenceBuilder(Suite suite, Project project, IReferenceBuilderFactory referenceBuilderFactory)
+        public AliasReferenceBuilder(Suite suite, Project project, IReferenceBuilderFactory referenceBuilderFactory, IUserOutput output)
         {
             Contract.Requires(suite != null);
             Contract.Requires(project != null);
@@ -33,6 +35,7 @@ namespace Bari.Core.Build
             this.suite = suite;
             this.project = project;
             this.referenceBuilderFactory = referenceBuilderFactory;
+            this.output = output;
         }
 
         /// <summary>
@@ -143,6 +146,10 @@ namespace Bari.Core.Build
                         {
                             var aliases = suite.GetParameters<ReferenceAliases>("aliases");
                             alias = aliases.Get(reference.Uri.Host);
+                            if (alias == null)
+                            {
+                                output.Warning(String.Format("The project {0} refers to a non-existing alias {1}", project.Name, reference.Uri.Host));
+                            }
                         }
                     }
 

@@ -25,6 +25,7 @@ namespace Bari.Core.Model
         private ProjectType type = ProjectType.Library;
         private string version;
         private string copyright;
+        private string company;
 
         /// <summary>
         /// Gets the module this project belongs to
@@ -81,6 +82,18 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets or sets the project's company
+        /// 
+        /// <para>Set this property to <c>null</c> to use the module's company in the
+        /// <see cref="EffectiveCompany"/> property.</para>
+        /// </summary>
+        public string Company
+        {
+            get { return company; }
+            set { company = value; }
+        }
+
+        /// <summary>
         /// Gets the version of this project, which may come from the module's or suite's version if not explicitly
         /// specified in the <see cref="Version"/> property.
         /// </summary>
@@ -96,6 +109,15 @@ namespace Bari.Core.Model
         public string EffectiveCopyright
         {
             get { return copyright ?? module.EffectiveCopyright; }
+        }
+
+        /// <summary>
+        /// Gets the company of this project, which may come from the module's or suite's company if not explicitly
+        /// specified in the <see cref="Company"/> property.
+        /// </summary>
+        public string EffectiveCompany
+        {
+            get { return company ?? module.EffectiveCompany; }
         }
 
         /// <summary>

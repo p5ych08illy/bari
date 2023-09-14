@@ -33,6 +33,20 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             this.targetDir = targetDir;
         }
 
+        public void WriteOutputPath(XmlWriter writer, Project project)
+        {
+            var tmpFolder = ToProjectRelativePath(project,
+                  Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
+                              "tmp",
+                              project.Module.Name,
+                              project.Name,
+                              "obj"),
+                              "cs");
+            writer.WriteStartElement("PropertyGroup");
+            writer.WriteElementString("BaseIntermediateOutputPath", tmpFolder);
+            writer.WriteEndElement();
+        }
+
         /// <summary>
         /// Writes the section using an XML writer
         /// </summary>
@@ -41,27 +55,62 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <param name="context">Current .csproj generation context</param>
         public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
         {
-            //writer.WriteStartElement("PropertyGroup");
-            //WriteConfigurationSpecificPart(writer, project);
-            //writer.WriteEndElement();
+            if (!project.IsSDKProject())
+            {
+                writer.WriteStartElement("PropertyGroup");
+                writer.WriteAttributeString("Condition", " '$(Configuration)|$(Platform)' == 'Bari|Bari' ");
+                WriteConfigurationSpecificPart(writer, project);
+                writer.WriteEndElement();
+            }
 
             writer.WriteStartElement("PropertyGroup");
 
             // Writing out configuration specific part to the non conditional block as well
             WriteConfigurationSpecificPart(writer, project);
 
-            writer.WriteElementString("OutputType", GetOutputType(project.Type));
-            writer.WriteElementString("Configurations", "Bari");
-            writer.WriteElementString("Platforms", "Bari");
+            //Nuget lock file
+            writer.WriteElementString("RestorePackagesWithLockFile", "true");
 
+            writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
-            writer.WriteElementString("UseWPF", "true");
 
             CsharpProjectParameters parameters = project.GetInheritableParameters<CsharpProjectParameters, CsharpProjectParametersDef>("csharp");
 
+            if (project.IsSDKProject())
+            {
+                writer.WriteElementString("Configurations", "Bari");
+                writer.WriteElementString("Platforms", "Bari");
+
+                if (parameters.IsUseWPFSpecified)
+                    writer.WriteElementString("UseWPF", XmlConvert.ToString(parameters.UseWPF));
+                if (parameters.IsUseWinFormsSpecified)
+                    writer.WriteElementString("UseWindowsForms", XmlConvert.ToString(parameters.UseWinForms));
+
+                if (!(project is TestProject))
+                    writer.WriteElementString("IsTestProject", "true");
+                writer.WriteElementString("SelfContained", "false");
+                writer.WriteElementString("AppendTargetFrameworkToOutputPath", "false");
+                writer.WriteElementString("AppendRuntimeIdentifierToOutputPath", "false");
+                writer.WriteElementString("EnableDefaultApplicationDefinition", "false");
+                writer.WriteElementString("RestoreProjectStyle", "PackageReference");
+                writer.WriteElementString("CopyLocalLockFileAssemblies", "true");
+                writer.WriteElementString("AccelerateBuildsInVisualStudio", "true");
+                writer.WriteElementString("NoDefaultLaunchSettingsFile", "true");
+
+                if ((parameters.IsUseWinFormsSpecified && parameters.UseWinForms) || (parameters.IsUseWPFSpecified && parameters.UseWPF))
+                    writer.WriteElementString("RuntimeIdentifier", "win-" + (Suite.ActiveGoal.Has("x64") ? "x64" : "x86"));
+                else if (parameters.IsTargetOSSpecified)
+                {
+                    var identifier = parameters.TargetOS.ToLower();
+                    writer.WriteElementString("RuntimeIdentifier", (identifier.StartsWith("win") ? "win" : identifier) + "-" + (Suite.ActiveGoal.Has("x64") ? "x64" : "x86"));
+                }
+
+                writer.WriteElementString("ValidateExecutableReferencesMatchSelfContained", "false");
+            }
+
             parameters.FillProjectSpecificMissingInfo(project);
-            parameters.ToCsprojProperties(writer);
+            parameters.ToCsprojProperties(project, writer);
 
             WriteAppConfig(writer, project);
             if (!WriteWin32Resource(writer, project))
@@ -78,18 +127,14 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             writer.WriteElementString("OutputPath",
                 ToProjectRelativePath(project, GetOutputPath(targetDir, project), "cs"));
             var tmpFolder = ToProjectRelativePath(project,
-                    Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
-                                "tmp",
-                                project.Module.Name,
-                                project.Name),
-                    "cs");
+                  Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
+                              "tmp",
+                              project.Module.Name,
+                              project.Name),
+                              "cs");
 
-            // writer.WriteElementString("BaseIntermediateOutputPath", tmpFolder);
             writer.WriteElementString("IntermediateOutputPath", tmpFolder);
-            writer.WriteElementString("AppendTargetFrameworkToOutputPath", "false");
-            writer.WriteElementString("AppendRuntimeIdentifierToOutputPath", "false");
-            writer.WriteElementString("ProduceReferenceAssemblyInOutDir", "true");
-            writer.WriteElementString("EnableDefaultApplicationDefinition", "false");
+            writer.WriteElementString("NuGetLockFilePath", Path.Combine(tmpFolder, string.Format("packages.{0}.lock.json", project.Name)));
         }
 
         private string GetOutputType(ProjectType type)

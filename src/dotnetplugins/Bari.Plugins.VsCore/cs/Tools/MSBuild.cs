@@ -31,13 +31,19 @@ namespace Bari.Plugins.VsCore.Tools
         /// </summary>
         /// <param name="root">The root directory which will became MSBuild's root directory</param>
         /// <param name="relativePath">Relative path of the solution file (or MSBuild file) to be processed</param>
-        public void Run(IFileSystemDirectory root, string relativePath)
+        public void Run(IFileSystemDirectory root, string relativePath, bool restore)
         {
             var localRoot = root as LocalFileSystemDirectory;
             if (localRoot != null)
             {
                 var absPath = Path.Combine(localRoot.AbsolutePath, relativePath);
-                if (!Run(root, (Path.GetFileName(absPath) ?? String.Empty), "/m", "/nologo", "/verbosity:" + Verbosity, "/consoleloggerparameters:" + ConsoleLoggerParameters, "/t:restore,build", "/nr:false"))
+                if (!Run(root, (Path.GetFileName(absPath) ?? String.Empty), "/m",
+                                                                            "/nologo", 
+                                                                            "/verbosity:" + Verbosity, 
+                                                                            "/consoleloggerparameters:" + ConsoleLoggerParameters, 
+                                                                            "/t:" + (restore ? "restore," : "") + "build",
+                                                                            "/nr:false"
+                                                                            ))
                     throw new MSBuildFailedException();
             }
             else

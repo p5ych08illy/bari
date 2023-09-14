@@ -104,3 +104,5 @@ bari.Plugins.Vcs.Git.csproj
 Bari.Plugins.Deps.csproj
 bari.Test.csproj
 systests.csproj
+
+*.csproj

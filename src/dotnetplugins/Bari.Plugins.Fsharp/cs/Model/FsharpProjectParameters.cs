@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml;
 using Bari.Core.Model;
 using Bari.Core.Model.Parameters;
+using Bari.Plugins.Fsharp.VisualStudio;
 using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.Fsharp.Model
@@ -19,7 +20,7 @@ namespace Bari.Plugins.Fsharp.Model
             Define<string[]>("Defines", mergeWithInherited: true);
             Define<bool>("DelaySign");
             Define<string>("DocOutput");
-            Define<int[]>("SuppressedWarnings", mergeWithInherited: true);
+            Define<string[]>("SuppressedWarnings", mergeWithInherited: true);
             Define<string>("KeyFile");
             Define<bool>("Optimize");
             Define<CLRPlatform>("Platform");
@@ -31,6 +32,7 @@ namespace Bari.Plugins.Fsharp.Model
             Define<bool>("HighEntropyVirtualAddressSpace");
             Define<FrameworkVersion>("TargetFrameworkVersion");
             Define<FrameworkProfile>("TargetFrameworkProfile");
+            Define<string>("TargetOS");
         }
 
         public override FsharpProjectParameters CreateDefault(Suite suite, FsharpProjectParameters parent)
@@ -91,9 +93,9 @@ namespace Bari.Plugins.Fsharp.Model
 
         public bool IsDocOutputSpecified { get { return IsSpecified("DocOutput"); } }
 
-        public int[] SuppressedWarnings
+        public string[] SuppressedWarnings
         {
-            get { return Get<int[]>("SuppressedWarnings"); }
+            get { return Get<string[]>("SuppressedWarnings"); }
             set { Set("SuppressedWarnings", value); }
         }
 
@@ -157,9 +159,9 @@ namespace Bari.Plugins.Fsharp.Model
 
         public bool IsAllWarningsAsErrorSpecified { get { return IsSpecified("AllWarningsAsError"); } }
 
-        public int[] SpecificWarningsAsError
+        public string[] SpecificWarningsAsError
         {
-            get { return Get<int[]>("SpecificWarningsAsError"); }
+            get { return Get<string[]>("SpecificWarningsAsError"); }
             set { Set("SpecificWarningsAsError", value); }
         }
 
@@ -189,6 +191,14 @@ namespace Bari.Plugins.Fsharp.Model
 
         public bool IsTargetFrameworkProfileSpecified { get { return IsSpecified("TargetFrameworkProfile"); } }
 
+        public string TargetOS
+        {
+            get { return Get<string>("TargetOS"); }
+            set { Set("TargetOS", value); }
+        }
+
+        public bool IsTargetOSSpecified { get { return IsSpecified("TargetOS"); } }
+
         public FsharpProjectParameters(Suite suite, FsharpProjectParameters parent = null)
             : base(parent)
         {
@@ -212,44 +222,59 @@ namespace Bari.Plugins.Fsharp.Model
             }
         }
 
-        private string ToFrameworkVersion(FrameworkVersion targetFrameworkVersion)
+        private string ToFramework(FrameworkVersion frameworkVersion)
         {
-            switch (targetFrameworkVersion)
+            switch (frameworkVersion)
             {
-                case FrameworkVersion.v20:
-                    return "net20";
-                case FrameworkVersion.v30:
-                    return "net30";
-                case FrameworkVersion.v35:
-                    return "net35";
-                case FrameworkVersion.v4:
-                    return "net40";
-                case FrameworkVersion.v45:
-                    return "net45";
-                case FrameworkVersion.v451:
-                    return "net451";
-                case FrameworkVersion.v452:
-                    return "net452";
-                case FrameworkVersion.v46:
-                    return "net46";
-                case FrameworkVersion.v461:
-                    return "net461";
-                case FrameworkVersion.v462:
-                    return "net462";
-                case FrameworkVersion.v47:
-                    return "net47";
-                case FrameworkVersion.v471:
-                    return "net471";
-                case FrameworkVersion.v472:
-                    return "net472";
-                case FrameworkVersion.v48:
-                    return "net48";
+                case FrameworkVersion.v6:
+                    return "net6.0";
+                case FrameworkVersion.v7:
+                    return "net7.0";
+                case FrameworkVersion.v8:
+                    return "net8.0";
                 default:
                     throw new ArgumentOutOfRangeException("targetFrameworkVersion");
             }
         }
 
-        public void ToFsprojProperties(XmlWriter writer)
+        private string ToFrameworkVersion(FrameworkVersion targetFrameworkVersion)
+        {
+            switch (targetFrameworkVersion)
+            {
+                case FrameworkVersion.v20:
+                    return "v2.0";
+                case FrameworkVersion.v30:
+                    return "v3.0";
+                case FrameworkVersion.v35:
+                    return "v3.5";
+                case FrameworkVersion.v4:
+                    return "v4.0";
+                case FrameworkVersion.v45:
+                    return "v4.5";
+                case FrameworkVersion.v451:
+                    return "v4.5.1";
+                case FrameworkVersion.v452:
+                    return "v4.5.2";
+                case FrameworkVersion.v46:
+                    return "v4.6";
+                case FrameworkVersion.v461:
+                    return "v4.6.1";
+                case FrameworkVersion.v462:
+                    return "v4.6.2";
+                case FrameworkVersion.v47:
+                    return "v4.7";
+                case FrameworkVersion.v471:
+                    return "v4.7.1";
+                case FrameworkVersion.v472:
+                    return "v4.7.2";
+                case FrameworkVersion.v48:
+                    return "v4.8";
+                default:
+                    throw new ArgumentOutOfRangeException("targetFrameworkVersion");
+            }
+        }
+
+        public void ToFsprojProperties(Project project, XmlWriter writer)
         {
             if (BaseAddress.HasValue)
                 writer.WriteElementString("BaseAddress", "0x"+BaseAddress.Value.ToString("X", CultureInfo.InvariantCulture));
@@ -308,7 +333,11 @@ namespace Bari.Plugins.Fsharp.Model
             var targetFrameworkVersion = IsTargetFrameworkVersionSpecified
                ? TargetFrameworkVersion
                : FrameworkVersion.v4;
-            writer.WriteElementString("TargetFramework", ToFrameworkVersion(targetFrameworkVersion));
+            
+            if (project.IsSDKProject())
+                writer.WriteElementString("TargetFramework", ToFramework(targetFrameworkVersion) + (IsTargetOSSpecified ? ("-" + TargetOS) : ""));
+            else
+                writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(targetFrameworkVersion));
 
             var targetFrameworkProfile = IsTargetFrameworkProfileSpecified
                 ? TargetFrameworkProfile

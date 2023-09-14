@@ -42,7 +42,8 @@ namespace Bari.Plugins.Nuget.Packager.Loader
                 { "license-url", () => target.LicenseUrl = new Uri(ParseString(value))},
                 { "icon-url", () => target.IconUrl = new Uri(ParseString(value)) },
                 { "package-as-tool", () => target.PackageAsTool = ParseBool(parser, value)},
-                { "api-key", () => target.ApiKey = ParseApiKey(ParseString(value)) }
+                { "api-key", () => target.ApiKey = ParseApiKey(ParseString(value)) },
+                { "package-reference", () => target.PackageReference = ParseBool(parser, value) },
             };
         }
 

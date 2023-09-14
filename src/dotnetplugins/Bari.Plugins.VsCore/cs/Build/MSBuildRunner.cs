@@ -21,6 +21,7 @@ namespace Bari.Plugins.VsCore.Build
     {
         private readonly SlnBuilder slnBuilder;
         private readonly TargetRelativePath slnPath;
+        private readonly bool restore;
         private readonly IFileSystemDirectory targetRoot;
         private readonly IMSBuild msbuild;
 
@@ -30,13 +31,15 @@ namespace Bari.Plugins.VsCore.Build
         /// <param name="slnBuilder">Sub task building the solution file, used as a dependency</param>
         /// <param name="slnPath">Path of the generated solution file</param>
         /// <param name="version">MSBuild version to use</param>
+        /// <param name="restore">Is nuget resotre needed?</param>
         /// <param name="targetRoot">Target directory</param>
         /// <param name="msbuildFactory">Factory to get the MSBuild implementation to use</param>
-        public MSBuildRunner(SlnBuilder slnBuilder, TargetRelativePath slnPath, MSBuildVersion version,
+        public MSBuildRunner(SlnBuilder slnBuilder, TargetRelativePath slnPath, MSBuildVersion version, bool restore,
                              [TargetRoot] IFileSystemDirectory targetRoot, IMSBuildFactory msbuildFactory)
         {
             this.slnBuilder = slnBuilder;
             this.slnPath = slnPath;
+            this.restore = restore;
             this.targetRoot = targetRoot;
             msbuild = msbuildFactory.CreateMSBuild(version);
         }
@@ -89,25 +92,9 @@ namespace Bari.Plugins.VsCore.Build
         /// <returns>Returns a set of generated files, in target relative paths</returns>
         public override ISet<TargetRelativePath> Run(IBuildContext context)
         {
-            // Collecting all the files already existing in 'targetdir/modulename' directories
             var targetDirs = new HashSet<string>(slnBuilder.Projects.Select(GetTargetDir));
-            var existingFiles = new Dictionary<TargetRelativePath, DateTime>();
-            var expectedOutputs =
-                new HashSet<TargetRelativePath>(slnBuilder.Projects.SelectMany(GetExpectedProjectOutputs).Union(GetDependencyResults(context)));
-
-            foreach (var targetDir in targetDirs)
-            {
-                var moduleTargetDir = targetRoot.GetChildDirectory(targetDir);
-                if (moduleTargetDir != null)
-                {
-                    foreach (var fileName in moduleTargetDir.Files)
-                    {
-                        existingFiles.Add(new TargetRelativePath(targetDir, fileName), moduleTargetDir.GetLastModifiedDate(fileName));
-                    }
-                }
-            }
-
-            msbuild.Run(targetRoot, slnPath);
+            
+            msbuild.Run(targetRoot, slnPath, restore);
 
             // Collecting all the files in 'targetdir/modulename' directories as results            
             var outputs = new HashSet<TargetRelativePath>();
@@ -122,31 +109,7 @@ namespace Bari.Plugins.VsCore.Build
                     foreach (var fileName in moduleTargetDir.Files)
                     {
                         var relativePath = new TargetRelativePath(targetDir, fileName);
-                        var lastModified = moduleTargetDir.GetLastModifiedDate(fileName);
-
-                        bool isNew = false;
-                        if (expectedOutputs.Contains(relativePath))
-                        {
-                            isNew = true;
-                        }
-                        else
-                        {
-                            DateTime previousLastModified;
-                            if (existingFiles.TryGetValue(relativePath, out previousLastModified))
-                            {
-                                if (lastModified != previousLastModified)
-                                {
-                                    isNew = true;
-                                }
-                            }
-                            else
-                            {
-                                isNew = true;
-                            }
-                        }
-
-                        if (isNew)
-                            outputs.Add(relativePath);
+                        outputs.Add(relativePath);
                     }
                 }
             }
@@ -188,28 +151,16 @@ namespace Bari.Plugins.VsCore.Build
 
         private IEnumerable<TargetRelativePath> GetExpectedProjectOutputs(Project project)
         {
-            string ext;
-            switch (project.Type)
-            {
-                case ProjectType.WindowsExecutable:
-                    ext = ".exe";
-                    break;
-                case ProjectType.Executable:
-                    ext = ".exe";
-                    break;
-                case ProjectType.Library:
-                    ext = ".dll";
-                    break;
-                case ProjectType.StaticLibrary:
-                    ext = ".lib";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ext);
+            yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ".runtimeconfig.json");
+            yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ".deps.json");
+            yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ".dll");
+            yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ".exe");
             yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ".pdb");
             if (project.HasNonEmptySourceSet("appconfig"))
-                yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + ext + ".config");
+            {
+                yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + "exe.config");
+                yield return new TargetRelativePath(project.RelativeTargetPath, project.Name + "dll.config");
+            }
         }
 
         private string GetTargetDir(Project project)

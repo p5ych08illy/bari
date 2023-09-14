@@ -26,7 +26,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
 
         protected override CsharpProjectParameters CreateNewParameters(Suite suite)
         {
-            return new CsharpProjectParameters(suite);            
+            return new CsharpProjectParameters(suite);
         }
 
         protected override Dictionary<string, Action> GetActions(CsharpProjectParameters target, YamlNode value, YamlParser parser)
@@ -60,7 +60,11 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"application-icon", () => { target.ApplicationIcon = ParseString(value); }},
                     {"target-framework-version", () => { target.TargetFrameworkVersion = ParseFrameworkVersion(ParseString(value)); }},
                     {"target-framework-profile", () => { target.TargetFrameworkProfile= ParseFrameworkProfile(ParseString(value)); }},
-                    {"target-framework", () => ApplyFrameworkVersionAndProfile(target, ParseString(value))}
+                    {"target-framework", () => ApplyFrameworkVersionAndProfile(target, ParseString(value))},
+                    {"sdk", () => { target.SDK = ParseString(value); }},
+                    {"use-wpf", () => { target.UseWPF = ParseBool(parser, value); }},
+                    {"use-winforms", () => { target.UseWinForms = ParseBool(parser, value); }},
+                    {"target-os", () => { target.TargetOS = ParseString(value); }}
                     };
         }
 
@@ -94,9 +98,12 @@ namespace Bari.Plugins.Csharp.Model.Loader
                 case "4.7.1": return FrameworkVersion.v471;
                 case "4.7.2": return FrameworkVersion.v472;
                 case "4.8": return FrameworkVersion.v48;
+                case "6.0": return FrameworkVersion.v6;
+                case "7.0": return FrameworkVersion.v7;
+                case "8.0": return FrameworkVersion.v8;
                 default:
                     throw new InvalidSpecificationException(
-                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7', '4.7.1', '4.7.2' or '4.8'", value));
+                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7', '4.7.1', '4.7.2', '4.8', '6.0', '7.0' or '8.0'", value));
             }
         }
 
@@ -118,13 +125,13 @@ namespace Bari.Plugins.Csharp.Model.Loader
                 target.AllWarningsAsError = ParseBool(parser, value);
         }
 
-        private int[] ParseWarnings(YamlParser parser, YamlNode value)
+        private string[] ParseWarnings(YamlParser parser, YamlNode value)
         {
             var seq = value as YamlSequenceNode;
             if (seq != null)
-                return parser.EnumerateNodesOf(seq).OfType<YamlScalarNode>().Select(childValue => Int32.Parse(childValue.Value)).ToArray();
+                return parser.EnumerateNodesOf(seq).OfType<YamlScalarNode>().Select(childValue => childValue.Value).ToArray();
             else
-                return new int[0];
+                return new string[0];
         }
 
         private string[] ParseDefines(YamlParser parser, YamlNode value)
@@ -211,9 +218,15 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     return CsharpLanguageVersion.V73;
                 case "8":
                     return CsharpLanguageVersion.V8;
+                case "9":
+                    return CsharpLanguageVersion.V9;
+                case "10":
+                    return CsharpLanguageVersion.V10;
+                case "11":
+                    return CsharpLanguageVersion.V11;
                 default:
                     throw new InvalidSpecificationException(
-                        String.Format("Invalid C# language version: {0}. Must be 'default', 'iso1', 'iso2', '3', '4', '5', '6', '7', '7.1', '7.2', '7.3' or '8'", sval));
+                        String.Format("Invalid C# language version: {0}. Must be 'default', 'iso1', 'iso2', '3', '4', '5', '6', '7', '7.1', '7.2', '7.3', '8', '9', '10' or '11'", sval));
             }
         }
 

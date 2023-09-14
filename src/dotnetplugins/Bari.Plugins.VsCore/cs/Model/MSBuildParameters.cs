@@ -7,6 +7,8 @@ namespace Bari.Plugins.VsCore.Model
     {
         public MSBuildVersion Version { get; set; }
 
+        public bool Restore { get; set; }
+
         public MSBuildParameters()
         {
             Version = MSBuildVersion.Net40x86;

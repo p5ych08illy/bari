@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Bari.Core.Model;
 using Bari.Core.Model.Parameters;
 
@@ -7,43 +8,20 @@ namespace Bari.Plugins.AddonSupport.Model
     /// <summary>
     /// Parameter block defining the startup <see cref="Module"/> or <see cref="Project"/> for a <see cref="Product"/>
     /// </summary>
-    public class StartupModuleParameters: IProjectParameters
+    public class StartupModuleParameters : IProjectParameters
     {
-        private readonly Project project;
-        private readonly Module module;
-
-        public Project Project
+        public IEnumerable<Project> Projects
         {
-            get
-            {
-                if (project != null)
-                {
-                    return project;
-                }
-                else if (module != null)
-                {
-                    return module.Projects.FirstOrDefault(
-                        prj => prj.Type == ProjectType.Executable || prj.Type == ProjectType.WindowsExecutable);
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            get; private set;
         }
 
-        public StartupModuleParameters(Project project)
+        public StartupModuleParameters(IEnumerable<Project> projects)
         {
-            this.project = project;
+            this.Projects = projects;
         }
-
-        public StartupModuleParameters(Module module)
-        {
-            this.module = module;
-        }
-
+        
         public StartupModuleParameters()
-        {            
+        {
         }
     }
 }

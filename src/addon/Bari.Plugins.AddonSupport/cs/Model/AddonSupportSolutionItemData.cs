@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Bari.Core.Commands.Helper;
 using Bari.Core.Model;
 
@@ -56,7 +58,7 @@ namespace Bari.Plugins.AddonSupport.Model
 
         private string FindOutResultExecutablePath(string targetStr)
         {
-            Project exeProject = null;
+            IEnumerable<Project> exeProjects = new List<Project>();
 
             var target = targetParser.ParseTarget(targetStr);
             var productTarget = target as ProductTarget;
@@ -65,21 +67,31 @@ namespace Bari.Plugins.AddonSupport.Model
                 if (productTarget.Product.HasParameters("startup"))
                 {
                     var startupParams = productTarget.Product.GetParameters<StartupModuleParameters>("startup");
-                    exeProject = startupParams.Project;
+                    exeProjects = startupParams.Projects;
                 }
             }
 
-            if (exeProject == null)
+            if (!exeProjects.Any())
             {
-                exeProject =
-                    target.Projects.FirstOrDefault(
-                        prj => prj.Type == ProjectType.Executable || prj.Type == ProjectType.WindowsExecutable);
+                return GetName(target.Projects.FirstOrDefault(
+                        prj => prj.Type == ProjectType.Executable || prj.Type == ProjectType.WindowsExecutable));
             }
 
-            if (exeProject != null)
-                return Path.Combine(exeProject.RelativeTargetPath, exeProject.Name + ".exe");
-            else
+            return exeProjects.Select(GetName).Aggregate(new StringBuilder(), (p, n) =>
+            {
+                if (p.Length > 0)
+                    p.Append(",");
+                p.Append(n);
+                return p;
+            }).ToString();
+        }
+
+        private string GetName(Project project)
+        {
+            if (project == null)
                 return String.Empty;
+
+            return Path.Combine(project.RelativeTargetPath, project.Name + ".exe");
         }
 
         private string FindOutCurrentTarget()

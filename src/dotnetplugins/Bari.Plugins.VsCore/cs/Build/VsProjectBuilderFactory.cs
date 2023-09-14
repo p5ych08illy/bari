@@ -136,7 +136,8 @@ namespace Bari.Plugins.VsCore.Build
             var msbuild = msBuildRunnerFactory.CreateMSBuildRunner(
                 slnBuilder,
                 new TargetRelativePath(String.Empty, slnBuilder.Uid + ".sln"), 
-                msbuildParams.Version);
+                msbuildParams.Version,
+                msbuildParams.Restore);
             return msbuild;
         }
 

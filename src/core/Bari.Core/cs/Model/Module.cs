@@ -15,7 +15,8 @@ namespace Bari.Core.Model
         private readonly string name;
         private string version;
         private string copyright;
-        
+        private string company;
+
         private readonly Suite suite;
 
         private readonly IDictionary<string, Project> projects = new Dictionary<string, Project>(StringComparer.InvariantCultureIgnoreCase);
@@ -78,6 +79,17 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets or sets the module's company
+        /// 
+        /// <para>To use the suite company in <see cref="EffectiveCompany"/>, set this property to <c>null</c>.</para>
+        /// </summary>
+        public string Company
+        {
+            get { return company; }
+            set { company = value; }
+        }
+
+        /// <summary>
         /// Gets the module's version or the suite version if no module specific version was specified
         /// </summary>
         public string EffectiveVersion
@@ -91,6 +103,14 @@ namespace Bari.Core.Model
         public string EffectiveCopyright
         {
             get { return copyright ?? suite.Copyright; }
+        }
+
+        /// <summary>
+        /// Gets the module's company or the suite's company if no module specific company was specified
+        /// </summary>
+        public string EffectiveCompany
+        {
+            get { return company ?? suite.Company; }
         }
 
         /// <summary>

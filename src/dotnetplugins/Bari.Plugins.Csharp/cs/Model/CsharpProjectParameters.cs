@@ -6,6 +6,7 @@ using System.Xml;
 using Bari.Core.Generic;
 using Bari.Core.Model;
 using Bari.Core.Model.Parameters;
+using Bari.Plugins.Csharp.VisualStudio;
 using Bari.Plugins.VsCore.Model;
 
 namespace Bari.Plugins.Csharp.Model
@@ -28,20 +29,24 @@ namespace Bari.Plugins.Csharp.Model
             Define<CsharpLanguageVersion>("LanguageVersion");
             Define<string>("MainClass");
             Define<bool>("NoStdLib");
-            Define<int[]>("SuppressedWarnings", mergeWithInherited: true);
+            Define<string[]>("SuppressedWarnings", mergeWithInherited: true);
             Define<bool>("NoWin32Manifest");
             Define<bool>("Optimize");
             Define<CLRPlatform>("Platform");
-            Define<string>("PreferredUILang");            
+            Define<string>("PreferredUILang");
             Define<string>("SubsystemVersion");
             Define<bool>("Unsafe");
             Define<WarningLevel>("WarningLevel");
             Define<bool>("AllWarningsAsError");
-            Define<int[]>("SpecificWarningsAsError", mergeWithInherited: true);
+            Define<string[]>("SpecificWarningsAsError", mergeWithInherited: true);
             Define<string>("RootNamespace");
             Define<string>("ApplicationIcon");
             Define<FrameworkVersion>("TargetFrameworkVersion");
             Define<FrameworkProfile>("TargetFrameworkProfile");
+            Define<string>("SDK");
+            Define<bool>("UseWPF");
+            Define<bool>("UseWindowsForms");
+            Define<string>("TargetOS");
         }
 
         public override CsharpProjectParameters CreateDefault(Suite suite, CsharpProjectParameters parent)
@@ -50,7 +55,7 @@ namespace Bari.Plugins.Csharp.Model
         }
     }
 
-    public class CsharpProjectParameters: InheritableProjectParameters<CsharpProjectParameters, CsharpProjectParametersDef>
+    public class CsharpProjectParameters : InheritableProjectParameters<CsharpProjectParameters, CsharpProjectParametersDef>
     {
         private readonly Suite suite;
 
@@ -86,7 +91,7 @@ namespace Bari.Plugins.Csharp.Model
 
         public string[] Defines
         {
-            get { return Get<string[]>("Defines");}
+            get { return Get<string[]>("Defines"); }
             set { Set("Defines", value); }
         }
 
@@ -162,9 +167,9 @@ namespace Bari.Plugins.Csharp.Model
 
         public bool IsNoStdLibSpecified { get { return IsSpecified("NoStdLib"); } }
 
-        public int[] SuppressedWarnings
+        public string[] SuppressedWarnings
         {
-            get { return Get<int[]>("SuppressedWarnings"); }
+            get { return Get<string[]>("SuppressedWarnings"); }
             set { Set("SuppressedWarnings", value); }
         }
 
@@ -234,9 +239,9 @@ namespace Bari.Plugins.Csharp.Model
 
         public bool IsAllWarningsAsErrorSpecified { get { return IsSpecified("AllWarningsAsError"); } }
 
-        public int[] SpecificWarningsAsError
+        public string[] SpecificWarningsAsError
         {
-            get { return Get<int[]>("SpecificWarningsAsError"); }
+            get { return Get<string[]>("SpecificWarningsAsError"); }
             set { Set("SpecificWarningsAsError", value); }
         }
 
@@ -274,6 +279,38 @@ namespace Bari.Plugins.Csharp.Model
 
         public bool IsTargetFrameworkProfileSpecified { get { return IsSpecified("TargetFrameworkProfile"); } }
 
+        public string SDK
+        {
+            get { return Get<string>("SDK"); }
+            set { Set("SDK", value); }
+        }
+
+        public bool IsSDKSpecified { get { return IsSpecified("SDK"); } }
+
+        public bool UseWPF
+        {
+            get { return Get<bool>("UseWPF"); }
+            set { Set("UseWPF", value); }
+        }
+
+        public bool IsUseWPFSpecified { get { return IsSpecified("UseWPF"); } }
+
+        public bool UseWinForms
+        {
+            get { return Get<bool>("UseWindowsForms"); }
+            set { Set("UseWindowsForms", value); }
+        }
+
+        public bool IsUseWinFormsSpecified { get { return IsSpecified("UseWindowsForms"); } }
+
+        public string TargetOS
+        {
+            get { return Get<string>("TargetOS"); }
+            set { Set("TargetOS", value); }
+        }
+
+        public bool IsTargetOSSpecified { get { return IsSpecified("TargetOS"); } }
+
         public CsharpProjectParameters(Suite suite, CsharpProjectParameters parent = null)
             : base(parent)
         {
@@ -297,13 +334,11 @@ namespace Bari.Plugins.Csharp.Model
             }
         }
 
-        public void ToCsprojProperties(XmlWriter writer)
+        public void ToCsprojProperties(Project project, XmlWriter writer)
         {
             if (BaseAddress.HasValue)
-                writer.WriteElementString("BaseAddress", "0x"+BaseAddress.Value.ToString("X", CultureInfo.InvariantCulture));
-            
-            writer.WriteElementString("CheckForOverflowUnderflow", XmlConvert.ToString(IsCheckedSpecified && Checked));
-            
+                writer.WriteElementString("BaseAddress", "0x" + BaseAddress.Value.ToString("X", CultureInfo.InvariantCulture));
+
             if (IsCodePageSpecified)
                 writer.WriteElementString("CodePage", CodePage);
 
@@ -320,7 +355,7 @@ namespace Bari.Plugins.Csharp.Model
             if (AreDefinesSpecified)
                 defines = Defines;
             else if (suite.ActiveGoal.Has(Suite.DebugGoal.Name))
-                defines = new[] {"DEBUG"};
+                defines = new[] { "DEBUG" };
             else
                 defines = new string[0];
             writer.WriteElementString("DefineConstants", string.Join(";", defines));
@@ -376,7 +411,7 @@ namespace Bari.Plugins.Csharp.Model
 
             writer.WriteElementString("AllowUnsafeBlocks", XmlConvert.ToString(IsUnsafeSpecified && Unsafe));
 
-            WarningLevel warningLevel = IsWarningLevelSpecified ? WarningLevel : WarningLevel.All;            
+            WarningLevel warningLevel = IsWarningLevelSpecified ? WarningLevel : WarningLevel.All;
             writer.WriteElementString("WarningLevel", XmlConvert.ToString((int)warningLevel));
 
             writer.WriteElementString("TreatWarningsAsErrors", XmlConvert.ToString(IsAllWarningsAsErrorSpecified && AllWarningsAsError));
@@ -384,19 +419,32 @@ namespace Bari.Plugins.Csharp.Model
             if (AreSpecificWarningsAsErrorSpecified)
                 writer.WriteElementString("WarningsAsErrors",
                                           String.Join(";", SpecificWarningsAsError.Select(warn => warn.ToString(CultureInfo.InvariantCulture))));
-            
+
             if (IsRootNamespaceSpecified)
                 writer.WriteElementString("RootNamespace", RootNamespace);
 
             var targetFrameworkVersion = IsTargetFrameworkVersionSpecified
                 ? TargetFrameworkVersion
                 : FrameworkVersion.v4;
-            writer.WriteElementString("TargetFramework", ToFrameworkVersion(targetFrameworkVersion));
+
+            if (project.IsSDKProject())
+            {
+                var os = (IsUseWinFormsSpecified && UseWinForms) || (IsUseWPFSpecified && UseWPF) ? "-windows" : (IsTargetOSSpecified ? TargetOS.ToLower() : "");
+                writer.WriteElementString("TargetFramework", ToFramework(targetFrameworkVersion) + os);
+            }
+            else
+                writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(targetFrameworkVersion));
 
             var targetFrameworkProfile = IsTargetFrameworkProfileSpecified
                 ? TargetFrameworkProfile
                 : FrameworkProfile.Default;
             writer.WriteElementString("TargetFrameworkProfile", ToFrameworkProfile(targetFrameworkProfile));
+
+
+            if (targetFrameworkVersion < FrameworkVersion.v6)
+            {
+                writer.WriteElementString("CheckForOverflowUnderflow", XmlConvert.ToString(IsCheckedSpecified && Checked));
+            }
         }
 
         private string ToFrameworkProfile(FrameworkProfile targetFrameworkProfile)
@@ -412,38 +460,53 @@ namespace Bari.Plugins.Csharp.Model
             }
         }
 
+        private string ToFramework(FrameworkVersion frameworkVersion)
+        {
+            switch (frameworkVersion)
+            {
+                case FrameworkVersion.v6:
+                    return "net6.0";
+                case FrameworkVersion.v7:
+                    return "net7.0";
+                case FrameworkVersion.v8:
+                    return "net8.0";
+                default:
+                    throw new ArgumentOutOfRangeException("targetFrameworkVersion");
+            }
+        }
+
         private string ToFrameworkVersion(FrameworkVersion targetFrameworkVersion)
         {
             switch (targetFrameworkVersion)
             {
                 case FrameworkVersion.v20:
-                    return "net20";
+                    return "v2.0";
                 case FrameworkVersion.v30:
-                    return "net30";
+                    return "v3.0";
                 case FrameworkVersion.v35:
-                    return "net35";
+                    return "v3.5";
                 case FrameworkVersion.v4:
-                    return "net40";
+                    return "v4.0";
                 case FrameworkVersion.v45:
-                    return "net45";
+                    return "v4.5";
                 case FrameworkVersion.v451:
-                    return "net451";
+                    return "v4.5.1";
                 case FrameworkVersion.v452:
-                    return "net452";
+                    return "v4.5.2";
                 case FrameworkVersion.v46:
-                    return "net46";
+                    return "v4.6";
                 case FrameworkVersion.v461:
-                    return "net461";
+                    return "v4.6.1";
                 case FrameworkVersion.v462:
-                    return "net462";
+                    return "v4.6.2";
                 case FrameworkVersion.v47:
-                    return "net47";
+                    return "v4.7";
                 case FrameworkVersion.v471:
-                    return "net471";
+                    return "v4.7.1";
                 case FrameworkVersion.v472:
-                    return "net472";
+                    return "v4.7.2";
                 case FrameworkVersion.v48:
-                    return "net48";
+                    return "v4.8";
                 default:
                     throw new ArgumentOutOfRangeException("targetFrameworkVersion");
             }
@@ -476,7 +539,13 @@ namespace Bari.Plugins.Csharp.Model
                 case CsharpLanguageVersion.V73:
                     return "7.3";
                 case CsharpLanguageVersion.V8:
-                    return "8";
+                    return "8.0";
+                case CsharpLanguageVersion.V9:
+                    return "9.0";
+                case CsharpLanguageVersion.V10:
+                    return "10.0";
+                case CsharpLanguageVersion.V11:
+                    return "11.0";
                 default:
                     throw new ArgumentOutOfRangeException("languageVersion");
             }
