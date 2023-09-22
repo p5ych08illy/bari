@@ -68,9 +68,6 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             // Writing out configuration specific part to the non conditional block as well
             WriteConfigurationSpecificPart(writer, project);
 
-            //Nuget lock file
-            writer.WriteElementString("RestorePackagesWithLockFile", "true");
-
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));

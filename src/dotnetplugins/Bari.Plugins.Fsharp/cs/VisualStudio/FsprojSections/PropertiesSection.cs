@@ -50,9 +50,6 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
             writer.WriteStartElement("PropertyGroup");
             WriteConfigurationSpecificPart(writer, project);
 
-            //Nuget lock file
-            writer.WriteElementString("RestorePackagesWithLockFile", "true");
-
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
