@@ -62,7 +62,6 @@ namespace Bari.Plugins.NUnit.Tools
         {
             List<string> ps = testAssemblies.Select(p => (string)p).ToList();
             ps.Add("-result=test-report.xml");
-            ps.Add("--inprocess");
             return Run(targetDir, ps.ToArray());
         }
     }
