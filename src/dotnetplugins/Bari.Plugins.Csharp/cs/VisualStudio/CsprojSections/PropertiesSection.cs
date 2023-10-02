@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -68,6 +68,10 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             // Writing out configuration specific part to the non conditional block as well
             WriteConfigurationSpecificPart(writer, project);
 
+            //Nuget lock file
+            writer.WriteElementString("RestorePackagesWithLockFile", "true");
+            writer.WriteElementString("RestoreLockedMode", "true");
+
             writer.WriteElementString("OutputType", GetOutputType(project.Type));
             writer.WriteElementString("AssemblyName", project.Name);
             writer.WriteElementString("ProjectGuid", projectGuidManagement.GetGuid(project).ToString("B"));
@@ -92,7 +96,6 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 writer.WriteElementString("EnableDefaultApplicationDefinition", "false");
                 writer.WriteElementString("RestoreProjectStyle", "PackageReference");
                 writer.WriteElementString("CopyLocalLockFileAssemblies", "true");
-                writer.WriteElementString("AccelerateBuildsInVisualStudio", "true");
                 writer.WriteElementString("NoDefaultLaunchSettingsFile", "true");
 
                 if ((parameters.IsUseWinFormsSpecified && parameters.UseWinForms) || (parameters.IsUseWPFSpecified && parameters.UseWPF))
