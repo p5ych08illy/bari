@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -84,7 +84,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 if (parameters.IsUseWinFormsSpecified)
                     writer.WriteElementString("UseWindowsForms", XmlConvert.ToString(parameters.UseWinForms));
 
-                if (!(project is TestProject))
+                if (project is TestProject)
                     writer.WriteElementString("IsTestProject", "true");
                 writer.WriteElementString("SelfContained", "false");
                 writer.WriteElementString("AppendTargetFrameworkToOutputPath", "false");
