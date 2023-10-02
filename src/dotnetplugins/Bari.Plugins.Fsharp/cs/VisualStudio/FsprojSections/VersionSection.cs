@@ -30,26 +30,26 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
         /// <param name="context">Current .csproj generation context</param>
         public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
         {
-            if (context.VersionOutput != null)
+            if (project.IsSDKProject())
             {
-                if (project.IsSDKProject())
+                writer.WriteStartElement("PropertyGroup");
+                if (!string.IsNullOrWhiteSpace(project.EffectiveVersion))
+                {
+                    writer.WriteElementString("FileVersion", project.EffectiveVersion);
+                    writer.WriteElementString("AssemblyVersion", project.EffectiveVersion);
+                    writer.WriteElementString("InformationalVersion", project.EffectiveVersion);
+                }
+                if (!string.IsNullOrWhiteSpace(project.EffectiveCopyright))
+                    writer.WriteElementString("Copyright", project.EffectiveCopyright);
+                if (!string.IsNullOrWhiteSpace(project.EffectiveCompany))
+                    writer.WriteElementString("Company", project.EffectiveCompany);
+                writer.WriteEndElement();
+            }
+            else
+            {
+                if (context.VersionOutput != null)
                 {
                     // Generating the version file (F# source code)
-                    writer.WriteStartElement("PropertyGroup");
-                    if (!string.IsNullOrWhiteSpace(project.EffectiveVersion))
-                    {
-                        writer.WriteElementString("FileVersion", project.EffectiveVersion);
-                        writer.WriteElementString("AssemblyVersion", project.EffectiveVersion);
-                        writer.WriteElementString("InformationalVersion", project.EffectiveVersion);
-                    }
-                    if (!string.IsNullOrWhiteSpace(project.EffectiveCopyright))
-                        writer.WriteElementString("Copyright", project.EffectiveCopyright);
-                    if (!string.IsNullOrWhiteSpace(project.EffectiveCompany))
-                        writer.WriteElementString("Company", project.EffectiveCompany);
-                    writer.WriteEndElement();
-                }
-                else
-                {
                     var generator = new FsharpVersionInfoGenerator(project);
                     generator.Generate(context.VersionOutput);
 

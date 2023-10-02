@@ -10,6 +10,7 @@ using Bari.Core.Model;
 using Bari.Plugins.Csharp.Build.Dependencies;
 using Bari.Plugins.Csharp.VisualStudio;
 using Bari.Plugins.VsCore.Build;
+using YamlDotNet.Core;
 
 namespace Bari.Plugins.Csharp.Build
 {
@@ -20,7 +21,7 @@ namespace Bari.Plugins.Csharp.Build
     /// </summary>
     public class CsprojBuilder : BuilderBase<CsprojBuilder>, ISlnProjectBuilder, IEquatable<CsprojBuilder>
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof (CsprojBuilder));
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(CsprojBuilder));
 
         private readonly IReferenceBuilderFactory referenceBuilderFactory;
         private readonly ISourceSetDependencyFactory sourceSetDependencyFactory;
@@ -50,7 +51,7 @@ namespace Bari.Plugins.Csharp.Build
         /// <param name="suite">The suite the project belongs to </param>
         /// <param name="targetDir">The build target directory </param>
         /// <param name="generator">The csproj generator class to be used</param>
-        public CsprojBuilder(IReferenceBuilderFactory referenceBuilderFactory, ISourceSetDependencyFactory sourceSetDependencyFactory, 
+        public CsprojBuilder(IReferenceBuilderFactory referenceBuilderFactory, ISourceSetDependencyFactory sourceSetDependencyFactory,
                              Project project, Suite suite, [TargetRoot] IFileSystemDirectory targetDir, CsprojGenerator generator)
         {
             this.referenceBuilderFactory = referenceBuilderFactory;
@@ -166,7 +167,7 @@ namespace Bari.Plugins.Csharp.Build
                 return referenceBuilders;
             }
         }
-        
+
         private IReferenceBuilder CreateReferenceBuilder(Reference reference)
         {
             var builder = referenceBuilderFactory.CreateReferenceBuilder(reference, project);
@@ -187,10 +188,13 @@ namespace Bari.Plugins.Csharp.Build
         {
             var csprojPath = project.Name + ".csproj";
             const string csversionPath = "version.cs";
+            TextWriter csversion = null;
 
             using (var csproj = project.RootDirectory.GetChildDirectory("cs").CreateTextFile(csprojPath))
-            using (var csversion = project.RootDirectory.CreateTextFile(csversionPath))
             {
+                if (!project.IsSDKProject())
+                    csversion = project.RootDirectory.CreateTextFile(csversionPath);
+
                 var references = new HashSet<TargetRelativePath>();
                 foreach (var refBuilder in context.GetDependencies(this).OfType<IReferenceBuilder>().Where(r => r.Reference.Type == ReferenceType.Build))
                 {
@@ -207,25 +211,31 @@ namespace Bari.Plugins.Csharp.Build
                 }
 
                 generator.Generate(project, references, csproj, csversion, csversionPath);
+                if (csversion != null)
+                    csversion.Dispose();
             }
 
-            return new HashSet<TargetRelativePath>(
+            var ret = new HashSet<TargetRelativePath>(
                 new[]
                     {
                         new TargetRelativePath(String.Empty,
-                            suite.SuiteRoot.GetRelativePathFrom(targetDir, 
+                            suite.SuiteRoot.GetRelativePathFrom(targetDir,
                                 Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), "cs", csprojPath))),
-                        new TargetRelativePath(String.Empty,
-                            suite.SuiteRoot.GetRelativePathFrom(targetDir, 
-                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), csversionPath)))
-                    });
+                });
+
+            if (csversion != null)
+                ret.Add(new TargetRelativePath(String.Empty,
+                            suite.SuiteRoot.GetRelativePathFrom(targetDir,
+                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), csversionPath))));
+
+            return ret;
         }
 
         public override void AddPrerequisite(IBuilder target)
         {
             if (referenceBuilders != null)
             {
-                referenceBuilders.Add((IReferenceBuilder) target);
+                referenceBuilders.Add((IReferenceBuilder)target);
                 dependencies = null;
                 fullSourceDependencies = null;
             }
@@ -239,7 +249,7 @@ namespace Bari.Plugins.Csharp.Build
             {
                 if (referenceBuilders.Contains(target))
                 {
-                    referenceBuilders.Remove((IReferenceBuilder) target);
+                    referenceBuilders.Remove((IReferenceBuilder)target);
                     dependencies = null;
                     fullSourceDependencies = null;
                 }

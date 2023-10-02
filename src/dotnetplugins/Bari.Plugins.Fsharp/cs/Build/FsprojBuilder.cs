@@ -193,10 +193,13 @@ namespace Bari.Plugins.Fsharp.Build
         {
             var fsprojPath = project.Name + ".fsproj";
             const string fsversionPath = "version.fs";
+            TextWriter fsversion = null;
 
             using (var fsproj = project.RootDirectory.GetChildDirectory("fs").CreateTextFile(fsprojPath))
-            using (var fsversion = project.RootDirectory.CreateTextFile(fsversionPath))
             {
+                if (!project.IsSDKProject())
+                    fsversion = project.RootDirectory.CreateTextFile(fsversionPath);
+
                 var references = new HashSet<TargetRelativePath>();
                 foreach (var refBuilder in context.GetDependencies(this).OfType<IReferenceBuilder>().Where(r => r.Reference.Type == ReferenceType.Build))
                 {
@@ -207,16 +210,20 @@ namespace Bari.Plugins.Fsharp.Build
                 generator.Generate(project, references, fsproj, fsversion, fsversionPath);
             }
 
-            return new HashSet<TargetRelativePath>(
+            var ret = new HashSet<TargetRelativePath>(
                 new[]
                     {
                         new TargetRelativePath(String.Empty,
                             suite.SuiteRoot.GetRelativePathFrom(targetDir, 
                                 Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), "fs", fsprojPath))),
-                        new TargetRelativePath(String.Empty,
-                            suite.SuiteRoot.GetRelativePathFrom(targetDir, 
-                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), fsversionPath)))
                     });
+
+            if (fsversion != null)
+                ret.Add(new TargetRelativePath(String.Empty,
+                            suite.SuiteRoot.GetRelativePathFrom(targetDir,
+                                Path.Combine(suite.SuiteRoot.GetRelativePath(project.RootDirectory), fsversionPath))));
+
+            return ret;
         }
 
         /// <summary>

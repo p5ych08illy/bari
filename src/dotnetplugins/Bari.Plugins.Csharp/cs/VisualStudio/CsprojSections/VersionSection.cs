@@ -29,27 +29,26 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
         /// <param name="context">Current .csproj generation context</param>
         public override void Write(XmlWriter writer, Project project, IMSBuildProjectGeneratorContext context)
         {
-            if (context.VersionOutput != null)
+            if (project.IsSDKProject())
             {
-                // Generating the version file (C# source code)
-
-                if (project.IsSDKProject())
+                writer.WriteStartElement("PropertyGroup");
+                if (!string.IsNullOrWhiteSpace(project.EffectiveVersion))
                 {
-                    writer.WriteStartElement("PropertyGroup");
-                    if (!string.IsNullOrWhiteSpace(project.EffectiveVersion))
-                    {
-                        writer.WriteElementString("FileVersion", project.EffectiveVersion);
-                        writer.WriteElementString("AssemblyVersion", project.EffectiveVersion);
-                        writer.WriteElementString("InformationalVersion", project.EffectiveVersion);
-                    }
-                    if (!string.IsNullOrWhiteSpace(project.EffectiveCopyright))
-                        writer.WriteElementString("Copyright", project.EffectiveCopyright);
-                    if (!string.IsNullOrWhiteSpace(project.EffectiveCompany))
-                        writer.WriteElementString("Company", project.EffectiveCompany);
-                    writer.WriteEndElement();
+                    writer.WriteElementString("FileVersion", project.EffectiveVersion);
+                    writer.WriteElementString("AssemblyVersion", project.EffectiveVersion);
+                    writer.WriteElementString("InformationalVersion", project.EffectiveVersion);
                 }
-                else
+                if (!string.IsNullOrWhiteSpace(project.EffectiveCopyright))
+                    writer.WriteElementString("Copyright", project.EffectiveCopyright);
+                if (!string.IsNullOrWhiteSpace(project.EffectiveCompany))
+                    writer.WriteElementString("Company", project.EffectiveCompany);
+                writer.WriteEndElement();
+            }
+            else
+            {
+                if (context.VersionOutput != null)
                 {
+                    // Generating the version file (C# source code)
                     var generator = new CsharpVersionInfoGenerator(project);
                     generator.Generate(context.VersionOutput);
 
