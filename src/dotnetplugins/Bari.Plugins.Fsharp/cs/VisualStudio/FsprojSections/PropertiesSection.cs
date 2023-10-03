@@ -40,7 +40,6 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
             if (!project.IsSDKProject())
             {
                 // TODO: merge common code with C# PropertiesSection
-
                 writer.WriteStartElement("PropertyGroup");
                 writer.WriteAttributeString("Condition", " '$(Configuration)|$(Platform)' == 'Bari|Bari' ");
                 WriteConfigurationSpecificPart(writer, project);
@@ -87,7 +86,6 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
                     "fs");
 
             writer.WriteElementString("IntermediateOutputPath", tmpFolder);
-            writer.WriteElementString("NuGetLockFilePath", Path.Combine(tmpFolder, string.Format("packages.{0}.lock.json", project.Name)));
         }
 
         private string GetOutputType(ProjectType type)
