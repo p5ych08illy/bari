@@ -208,6 +208,9 @@ namespace Bari.Plugins.Fsharp.Build
                 }
 
                 generator.Generate(project, references, fsproj, fsversion, fsversionPath);
+                
+                if (fsversion != null)
+                    fsversion.Dispose();
             }
 
             var ret = new HashSet<TargetRelativePath>(

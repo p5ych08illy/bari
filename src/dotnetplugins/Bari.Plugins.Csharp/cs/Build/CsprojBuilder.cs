@@ -211,6 +211,7 @@ namespace Bari.Plugins.Csharp.Build
                 }
 
                 generator.Generate(project, references, csproj, csversion, csversionPath);
+                
                 if (csversion != null)
                     csversion.Dispose();
             }
