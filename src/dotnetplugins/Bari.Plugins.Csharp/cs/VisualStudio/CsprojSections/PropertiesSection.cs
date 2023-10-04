@@ -79,14 +79,8 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 writer.WriteElementString("Configurations", "Bari");
                 writer.WriteElementString("Platforms", "Bari");
 
-                if (parameters.IsUseWPFSpecified)
-                    writer.WriteElementString("UseWPF", XmlConvert.ToString(parameters.UseWPF));
-                if (parameters.IsUseWinFormsSpecified)
-                    writer.WriteElementString("UseWindowsForms", XmlConvert.ToString(parameters.UseWinForms));
-
                 if (project is TestProject)
                     writer.WriteElementString("IsTestProject", "true");
-                writer.WriteElementString("SelfContained", "false");
                 writer.WriteElementString("AppendTargetFrameworkToOutputPath", "false");
                 writer.WriteElementString("AppendRuntimeIdentifierToOutputPath", "false");
                 writer.WriteElementString("EnableDefaultApplicationDefinition", "false");
@@ -146,7 +140,6 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                     throw new ArgumentOutOfRangeException("type");
             }
         }
-
 
         private void WriteAppConfig(XmlWriter writer, Project project)
         {

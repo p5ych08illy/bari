@@ -47,6 +47,7 @@ namespace Bari.Plugins.Csharp.Model
             Define<bool>("UseWPF");
             Define<bool>("UseWindowsForms");
             Define<string>("TargetOS");
+            Define<bool>("SelfContained");
         }
 
         public override CsharpProjectParameters CreateDefault(Suite suite, CsharpProjectParameters parent)
@@ -310,6 +311,14 @@ namespace Bari.Plugins.Csharp.Model
         }
 
         public bool IsTargetOSSpecified { get { return IsSpecified("TargetOS"); } }
+        
+        public bool SelfContained
+        {
+            get { return Get<bool>("SelfContained"); }
+            set { Set("SelfContained", value); }
+        }
+
+        public bool IsSelfContainedSpecified { get { return IsSpecified("SelfContained"); } }
 
         public CsharpProjectParameters(Suite suite, CsharpProjectParameters parent = null)
             : base(parent)
@@ -429,6 +438,13 @@ namespace Bari.Plugins.Csharp.Model
 
             if (project.IsSDKProject())
             {
+                if (IsUseWPFSpecified)
+                    writer.WriteElementString("UseWPF", XmlConvert.ToString(UseWPF));
+                if (IsUseWinFormsSpecified)
+                    writer.WriteElementString("UseWindowsForms", XmlConvert.ToString(UseWinForms));
+
+                writer.WriteElementString("SelfContained", XmlConvert.ToString(IsSelfContainedSpecified && SelfContained));
+
                 var os = (IsUseWinFormsSpecified && UseWinForms) || (IsUseWPFSpecified && UseWPF) ? "-windows" : (IsTargetOSSpecified ? TargetOS.ToLower() : "");
                 writer.WriteElementString("TargetFramework", ToFramework(targetFrameworkVersion) + os);
             }

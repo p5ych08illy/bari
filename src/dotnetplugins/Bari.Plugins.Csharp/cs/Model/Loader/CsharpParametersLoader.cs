@@ -64,7 +64,8 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"sdk", () => { target.SDK = ParseString(value); }},
                     {"use-wpf", () => { target.UseWPF = ParseBool(parser, value); }},
                     {"use-winforms", () => { target.UseWinForms = ParseBool(parser, value); }},
-                    {"target-os", () => { target.TargetOS = ParseString(value); }}
+                    {"target-os", () => { target.TargetOS = ParseString(value); }},
+                    {"self-contained", () => { target.SelfContained = ParseBool(parser, value); }}
                     };
         }
 

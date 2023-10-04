@@ -33,6 +33,7 @@ namespace Bari.Plugins.Fsharp.Model
             Define<FrameworkVersion>("TargetFrameworkVersion");
             Define<FrameworkProfile>("TargetFrameworkProfile");
             Define<string>("TargetOS");
+            Define<bool>("SelfContained");
         }
 
         public override FsharpProjectParameters CreateDefault(Suite suite, FsharpProjectParameters parent)
@@ -199,6 +200,14 @@ namespace Bari.Plugins.Fsharp.Model
 
         public bool IsTargetOSSpecified { get { return IsSpecified("TargetOS"); } }
 
+        public bool SelfContained
+        {
+            get { return Get<bool>("SelfContained"); }
+            set { Set("SelfContained", value); }
+        }
+        
+        public bool IsSelfContainedSpecified { get { return IsSpecified("SelfContained"); } }
+
         public FsharpProjectParameters(Suite suite, FsharpProjectParameters parent = null)
             : base(parent)
         {
@@ -333,9 +342,13 @@ namespace Bari.Plugins.Fsharp.Model
             var targetFrameworkVersion = IsTargetFrameworkVersionSpecified
                ? TargetFrameworkVersion
                : FrameworkVersion.v4;
-            
+
             if (project.IsSDKProject())
+            {
+                writer.WriteElementString("SelfContained", XmlConvert.ToString(IsSelfContainedSpecified && SelfContained));
+
                 writer.WriteElementString("TargetFramework", ToFramework(targetFrameworkVersion) + (IsTargetOSSpecified ? ("-" + TargetOS) : ""));
+            }
             else
                 writer.WriteElementString("TargetFrameworkVersion", ToFrameworkVersion(targetFrameworkVersion));
 
