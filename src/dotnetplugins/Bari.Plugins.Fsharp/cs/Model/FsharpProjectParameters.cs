@@ -345,7 +345,7 @@ namespace Bari.Plugins.Fsharp.Model
 
             if (project.IsSDKProject())
             {
-                writer.WriteElementString("SelfContained", XmlConvert.ToString(IsSelfContainedSpecified && SelfContained));
+                writer.WriteElementString("SelfContained", XmlConvert.ToString(IsSelfContainedSpecified && SelfContained && suite.ActiveGoal.Has(Suite.ReleaseGoal.Name)));
 
                 writer.WriteElementString("TargetFramework", ToFramework(targetFrameworkVersion) + (IsTargetOSSpecified ? ("-" + TargetOS) : ""));
             }

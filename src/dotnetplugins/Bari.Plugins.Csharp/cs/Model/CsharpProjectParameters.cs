@@ -443,7 +443,7 @@ namespace Bari.Plugins.Csharp.Model
                 if (IsUseWinFormsSpecified)
                     writer.WriteElementString("UseWindowsForms", XmlConvert.ToString(UseWinForms));
 
-                writer.WriteElementString("SelfContained", XmlConvert.ToString(IsSelfContainedSpecified && SelfContained));
+                writer.WriteElementString("SelfContained", XmlConvert.ToString(IsSelfContainedSpecified && SelfContained && suite.ActiveGoal.Has(Suite.ReleaseGoal.Name)));
 
                 var os = (IsUseWinFormsSpecified && UseWinForms) || (IsUseWPFSpecified && UseWPF) ? "-windows" : (IsTargetOSSpecified ? TargetOS.ToLower() : "");
                 writer.WriteElementString("TargetFramework", ToFramework(targetFrameworkVersion) + os);
