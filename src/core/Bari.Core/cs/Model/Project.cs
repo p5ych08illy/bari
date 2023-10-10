@@ -49,6 +49,14 @@ namespace Bari.Core.Model
         }
 
         /// <summary>
+        /// Gets the project's title
+        /// </summary>
+        public string Title
+        {
+            get; set;
+        }
+
+        /// <summary>
         /// Gets or sets the project type
         /// </summary>
         public ProjectType Type

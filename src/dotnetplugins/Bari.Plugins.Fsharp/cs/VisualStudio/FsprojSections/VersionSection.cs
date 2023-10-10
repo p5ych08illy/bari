@@ -43,6 +43,8 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
                     writer.WriteElementString("Copyright", project.EffectiveCopyright);
                 if (!string.IsNullOrWhiteSpace(project.EffectiveCompany))
                     writer.WriteElementString("Company", project.EffectiveCompany);
+                if (!string.IsNullOrWhiteSpace(project.Title))
+                    writer.WriteElementString("AssemblyTitle", project.Title);
                 writer.WriteEndElement();
             }
             else

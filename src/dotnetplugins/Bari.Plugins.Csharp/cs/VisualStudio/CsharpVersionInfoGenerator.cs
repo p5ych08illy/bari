@@ -46,6 +46,11 @@ namespace Bari.Plugins.Csharp.VisualStudio
             {
                 output.WriteLine("[assembly: AssemblyCompany(\"{0}\")]", project.EffectiveCompany);
             }
+
+            if (!string.IsNullOrWhiteSpace(project.Title))
+            {
+                output.WriteLine("[assembly: AssemblyTitle(\"{0}\")]", project.Title);
+            }
         }
     }
 }

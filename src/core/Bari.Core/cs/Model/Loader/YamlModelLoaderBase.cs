@@ -387,6 +387,10 @@ namespace Bari.Core.Model.Loader
                     {
                         project.Company = ((YamlScalarNode)pair.Value).Value;
                     }
+                    else if (new YamlScalarNode("title").Equals(pair.Key) && pair.Value is YamlScalarNode)
+                    {
+                        project.Title = ((YamlScalarNode)pair.Value).Value;
+                    }
                     else if (new YamlScalarNode("references").Equals(pair.Key) &&
                         pair.Value is YamlSequenceNode)
                     {
