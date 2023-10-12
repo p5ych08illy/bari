@@ -87,6 +87,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 writer.WriteElementString("RestoreProjectStyle", "PackageReference");
                 writer.WriteElementString("CopyLocalLockFileAssemblies", "true");
                 writer.WriteElementString("NoDefaultLaunchSettingsFile", "true");
+                writer.WriteElementString("UseIJWHost", "true");
 
                 if ((parameters.IsUseWinFormsSpecified && parameters.UseWinForms) || (parameters.IsUseWPFSpecified && parameters.UseWPF))
                     writer.WriteElementString("RuntimeIdentifier", "win-" + (Suite.ActiveGoal.Has("x64") ? "x64" : "x86"));
