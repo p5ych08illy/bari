@@ -26,7 +26,7 @@ namespace Bari.Plugins.Csharp.Model
             Define<bool>("HighEntropyVirtualAddressSpace");
             Define<string>("KeyContainer");
             Define<string>("KeyFile");
-            Define<CsharpLanguageVersion>("LanguageVersion");
+            Define<string>("LanguageVersion");
             Define<string>("MainClass");
             Define<bool>("NoStdLib");
             Define<string[]>("SuppressedWarnings", mergeWithInherited: true);
@@ -144,9 +144,9 @@ namespace Bari.Plugins.Csharp.Model
 
         public bool IsKeyFileSpecified { get { return IsSpecified("KeyFile"); } }
 
-        public CsharpLanguageVersion LanguageVersion
+        public string LanguageVersion
         {
-            get { return Get<CsharpLanguageVersion>("LanguageVersion"); }
+            get { return Get<string>("LanguageVersion"); }
             set { Set("LanguageVersion", value); }
         }
 
@@ -385,7 +385,7 @@ namespace Bari.Plugins.Csharp.Model
             if (IsKeyFileSpecified)
                 writer.WriteElementString("KeyOriginatorFile", KeyFile);
 
-            writer.WriteElementString("LangVersion", ToParameter(IsLanguageVersionSpecified ? LanguageVersion : CsharpLanguageVersion.Default));
+            writer.WriteElementString("LangVersion", IsLanguageVersionSpecified ? LanguageVersion : "Default");
 
             if (IsMainClassSpecified)
                 writer.WriteElementString("StartupObject", MainClass);
@@ -525,45 +525,6 @@ namespace Bari.Plugins.Csharp.Model
                     return "v4.8";
                 default:
                     throw new ArgumentOutOfRangeException("targetFrameworkVersion");
-            }
-        }
-
-        private string ToParameter(CsharpLanguageVersion languageVersion)
-        {
-            switch (languageVersion)
-            {
-                case CsharpLanguageVersion.Default:
-                    return "Default";
-                case CsharpLanguageVersion.ISO1:
-                    return "ISO-1";
-                case CsharpLanguageVersion.ISO2:
-                    return "ISO-2";
-                case CsharpLanguageVersion.V3:
-                    return "3";
-                case CsharpLanguageVersion.V4:
-                    return "4";
-                case CsharpLanguageVersion.V5:
-                    return "5";
-                case CsharpLanguageVersion.V6:
-                    return "6";
-                case CsharpLanguageVersion.V7:
-                    return "7";
-                case CsharpLanguageVersion.V71:
-                    return "7.1";
-                case CsharpLanguageVersion.V72:
-                    return "7.2";
-                case CsharpLanguageVersion.V73:
-                    return "7.3";
-                case CsharpLanguageVersion.V8:
-                    return "8.0";
-                case CsharpLanguageVersion.V9:
-                    return "9.0";
-                case CsharpLanguageVersion.V10:
-                    return "10.0";
-                case CsharpLanguageVersion.V11:
-                    return "11.0";
-                default:
-                    throw new ArgumentOutOfRangeException("languageVersion");
             }
         }
     }

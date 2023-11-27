@@ -44,7 +44,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"high-entropy-virtual-address-space", () => { target.HighEntropyVirtualAddressSpace = ParseBool(parser, value); }},
                     {"key-container", () => { target.KeyContainer = ParseString(value); }},
                     {"key-file", () => { target.KeyFile = ParseString(value); }},
-                    {"language-version", () => { target.LanguageVersion = ParseLanguageVersion(value); }},
+                    {"language-version", () => { target.LanguageVersion = ParseString(value); }},
                     {"main-class", () => { target.MainClass = ParseString(value); }},
                     {"no-std-lib", () => { target.NoStdLib = ParseBool(parser, value); }},
                     {"suppressed-warnings", () => { target.SuppressedWarnings = ParseWarnings(parser, value); }},
@@ -187,47 +187,6 @@ namespace Bari.Plugins.Csharp.Model.Loader
                 default:
                     throw new InvalidSpecificationException(
                         String.Format("Invalid CLR platform: {0}. Must be 'anycpu', 'anycpu-32bit-preferred', 'arm', 'x64', 'x86' or 'itanium'", sval));
-            }
-        }
-
-        private CsharpLanguageVersion ParseLanguageVersion(YamlNode value)
-        {
-            var sval = ParseString(value).ToLowerInvariant();
-            switch (sval)
-            {
-                case "default":
-                    return CsharpLanguageVersion.Default;
-                case "iso1":
-                    return CsharpLanguageVersion.ISO1;
-                case "iso2":
-                    return CsharpLanguageVersion.ISO2;
-                case "3":
-                    return CsharpLanguageVersion.V3;
-                case "4":
-                    return CsharpLanguageVersion.V4;
-                case "5":
-                    return CsharpLanguageVersion.V5;
-                case "6":
-                    return CsharpLanguageVersion.V6;
-                case "7":
-                    return CsharpLanguageVersion.V7;
-                case "7.1":
-                    return CsharpLanguageVersion.V71;
-                case "7.2":
-                    return CsharpLanguageVersion.V72;
-                case "7.3":
-                    return CsharpLanguageVersion.V73;
-                case "8":
-                    return CsharpLanguageVersion.V8;
-                case "9":
-                    return CsharpLanguageVersion.V9;
-                case "10":
-                    return CsharpLanguageVersion.V10;
-                case "11":
-                    return CsharpLanguageVersion.V11;
-                default:
-                    throw new InvalidSpecificationException(
-                        String.Format("Invalid C# language version: {0}. Must be 'default', 'iso1', 'iso2', '3', '4', '5', '6', '7', '7.1', '7.2', '7.3', '8', '9', '10' or '11'", sval));
             }
         }
 

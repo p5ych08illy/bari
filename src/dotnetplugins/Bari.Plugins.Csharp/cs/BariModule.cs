@@ -59,9 +59,6 @@ namespace Bari.Plugins.Csharp
             Bind<ISlnNameGenerator>().To<HashBasedSlnNameGenerator>().WhenInjectedInto<ReadableSlnNameGenerator>();
             Bind<ISlnNameGenerator>().To<ReadableSlnNameGenerator>();
 
-            var protocolRegistry = Kernel.Get<IDependencyFingerprintProtocolRegistry>();
-            protocolRegistry.RegisterEnum(i => (CsharpLanguageVersion)i);
-
             var store = Kernel.Get<IBuilderStore>();
             var csprojBuilderFactory = Kernel.Get<ICsprojBuilderFactory>();
             Rebind<ICsprojBuilderFactory>().ToConstant(
