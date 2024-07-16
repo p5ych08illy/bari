@@ -64,6 +64,7 @@ namespace Bari.Plugins.Fsharp.VisualStudio.FsprojSections
                 writer.WriteElementString("ProduceReferenceAssemblyInOutDir", "true");
                 writer.WriteElementString("RestoreProjectStyle", "PackageReference");
                 writer.WriteElementString("CopyLocalLockFileAssemblies", "true");
+                writer.WriteElementString("DisableImplicitFSharpCoreReference", "true");
 
                 writer.WriteElementString("ValidateExecutableReferencesMatchSelfContained", "false");
             }
