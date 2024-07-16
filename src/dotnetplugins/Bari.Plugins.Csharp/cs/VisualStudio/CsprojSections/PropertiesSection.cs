@@ -88,6 +88,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 writer.WriteElementString("CopyLocalLockFileAssemblies", "true");
                 writer.WriteElementString("NoDefaultLaunchSettingsFile", "true");
                 writer.WriteElementString("UseIJWHost", "true");
+                
 
                 if ((parameters.IsUseWinFormsSpecified && parameters.UseWinForms) || (parameters.IsUseWPFSpecified && parameters.UseWPF))
                     writer.WriteElementString("RuntimeIdentifier", "win-" + (Suite.ActiveGoal.Has("x64") ? "x64" : "x86"));
@@ -111,6 +112,19 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             }
 
             writer.WriteEndElement();
+
+
+            // Proto
+            if (parameters.IsProtoFileSpecified && parameters.IsGrpcServicesSpecified)
+            {
+                writer.WriteStartElement("ItemGroup");
+                writer.WriteStartElement("Protobuf");
+                writer.WriteAttributeString("Include", parameters.ProtoFile);
+                writer.WriteAttributeString("GrpcServices", parameters.GrpcServices);
+                writer.WriteElementString("Link", "Protos\\" + Path.GetFileName(parameters.ProtoFile));
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
         }
 
         private void WriteConfigurationSpecificPart(XmlWriter writer, Project project)

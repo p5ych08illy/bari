@@ -48,6 +48,8 @@ namespace Bari.Plugins.Csharp.Model
             Define<bool>("UseWindowsForms");
             Define<string>("TargetOS");
             Define<bool>("SelfContained");
+            Define<string>("ProtoFile");
+            Define<string>("GrpcServices");
         }
 
         public override CsharpProjectParameters CreateDefault(Suite suite, CsharpProjectParameters parent)
@@ -320,6 +322,22 @@ namespace Bari.Plugins.Csharp.Model
 
         public bool IsSelfContainedSpecified { get { return IsSpecified("SelfContained"); } }
 
+        public string ProtoFile
+        {
+            get { return Get<string>("ProtoFile"); }
+            set { Set("ProtoFile", value); }
+        }
+
+        public bool IsProtoFileSpecified { get { return IsSpecified("ProtoFile"); } }
+
+        public string GrpcServices
+        {
+            get { return Get<string>("GrpcServices"); }
+            set { Set("GrpcServices", value); }
+        }
+
+        public bool IsGrpcServicesSpecified { get { return IsSpecified("GrpcServices"); } }
+
         public CsharpProjectParameters(Suite suite, CsharpProjectParameters parent = null)
             : base(parent)
         {
@@ -435,6 +453,9 @@ namespace Bari.Plugins.Csharp.Model
             var targetFrameworkVersion = IsTargetFrameworkVersionSpecified
                 ? TargetFrameworkVersion
                 : FrameworkVersion.v4;
+
+
+
 
             if (project.IsSDKProject())
             {
