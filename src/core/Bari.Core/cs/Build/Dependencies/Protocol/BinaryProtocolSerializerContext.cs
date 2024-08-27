@@ -131,6 +131,21 @@ namespace Bari.Core.Build.Dependencies.Protocol
                     WritePrimitive(pair.Value, valType);
                 }
             }
+            else if (typeof(Tuple).IsAssignableFrom(valueType) ||
+                    valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(Tuple<,>))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolTuple);
+                var item1Type = valueType.GetGenericArguments()[0];
+                var item2Type = valueType.GetGenericArguments()[1];
+                WriteType(item1Type);
+                WriteType(item2Type);
+                var item1Field = valueType.GetProperty("Item1");
+                var item1 = item1Field.GetValue(value, null);
+                WritePrimitive(item1, item1Type);
+                var item2Field = valueType.GetProperty("Item2");
+                var item2 = item2Field.GetValue(value, null);
+                WritePrimitive(item2, item2Type);
+            }
             else
             {
                 var nt = Nullable.GetUnderlyingType(valueType);
@@ -197,6 +212,12 @@ namespace Bari.Core.Build.Dependencies.Protocol
             else if (typeof(IDictionary).IsAssignableFrom(type))
             {
                 writer.Write((int)ProtocolPrimitiveValue.ProtocolDict);
+                WriteType(type.GetGenericArguments()[0]);
+                WriteType(type.GetGenericArguments()[1]);
+            }
+            else if (type.FullName.StartsWith("System.Tuple`2"))
+            {
+                writer.Write((int)ProtocolPrimitiveValue.ProtocolTuple);
                 WriteType(type.GetGenericArguments()[0]);
                 WriteType(type.GetGenericArguments()[1]);
             }

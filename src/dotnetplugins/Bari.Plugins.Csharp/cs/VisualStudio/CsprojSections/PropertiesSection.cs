@@ -88,7 +88,7 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 writer.WriteElementString("CopyLocalLockFileAssemblies", "true");
                 writer.WriteElementString("NoDefaultLaunchSettingsFile", "true");
                 writer.WriteElementString("UseIJWHost", "true");
-                
+
 
                 if ((parameters.IsUseWinFormsSpecified && parameters.UseWinForms) || (parameters.IsUseWPFSpecified && parameters.UseWPF))
                     writer.WriteElementString("RuntimeIdentifier", "win-" + (Suite.ActiveGoal.Has("x64") ? "x64" : "x86"));
@@ -124,6 +124,20 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
                 writer.WriteElementString("Link", "Protos\\" + Path.GetFileName(parameters.ProtoFile));
                 writer.WriteEndElement();
                 writer.WriteEndElement();
+            }
+
+            if (parameters.IsLinksSpecified && parameters.Links.Any())
+            {
+                writer.WriteStartElement("ItemGroup");
+
+                foreach (var link in parameters.Links)
+                {
+                    writer.WriteStartElement("Compile");
+                    writer.WriteAttributeString("Include", link.Item1);
+                    writer.WriteAttributeString("Link", link.Item2);
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();//ItemGroup
             }
         }
 

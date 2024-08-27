@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Bari.Core.Build.Dependencies.Protocol
 {
@@ -111,6 +112,11 @@ namespace Bari.Core.Build.Dependencies.Protocol
                     var valType = ReadType();
                     return Tuple.Create(primitiveType,
                         typeof (Dictionary<,>).MakeGenericType(keyType.Item2, valType.Item2));
+                case ProtocolPrimitiveValue.ProtocolTuple:
+                    var item1Type = ReadType();
+                    var item2Type = ReadType();
+                    return Tuple.Create(primitiveType,
+                        typeof(Tuple<,>).MakeGenericType(item1Type.Item2, item2Type.Item2));
                 case ProtocolPrimitiveValue.ProtocolNull:
                     return Tuple.Create(primitiveType, typeof (object));
                 default:
@@ -193,6 +199,20 @@ namespace Bari.Core.Build.Dependencies.Protocol
 
                     return dict;
                 }
+                case ProtocolPrimitiveValue.ProtocolTuple:
+                    {
+                        var item1Type = ReadType();
+                        var item2Type = ReadType();
+                        var typeArguments = new Type[] { item1Type.Item2, item2Type.Item2 };
+
+                        var item1 = ReadPrimitive();
+                        var item2 = ReadPrimitive();
+
+                        return typeof(Tuple<,>).GetMethods()
+                                .FirstOrDefault(method => method.Name == "Create" && method.GetParameters().Length == typeArguments.Length)
+                                .MakeGenericMethod(typeArguments)
+                                .Invoke(null, new[] { item1, item2 });
+                    }
                 default:
                     throw new InvalidOperationException("Illegal primitive type: " + primitiveType);
             }

@@ -50,6 +50,7 @@ namespace Bari.Plugins.Csharp.Model
             Define<bool>("SelfContained");
             Define<string>("ProtoFile");
             Define<string>("GrpcServices");
+            Define<Tuple<string,string>[]>("Links");
         }
 
         public override CsharpProjectParameters CreateDefault(Suite suite, CsharpProjectParameters parent)
@@ -337,6 +338,15 @@ namespace Bari.Plugins.Csharp.Model
         }
 
         public bool IsGrpcServicesSpecified { get { return IsSpecified("GrpcServices"); } }
+
+        public Tuple<string, string>[] Links
+        {
+            get { return Get<Tuple<string, string>[]>("Links"); }
+            set { Set("Links", value); }
+        }
+
+        public bool IsLinksSpecified { get { return IsSpecified("Links"); } }
+
 
         public CsharpProjectParameters(Suite suite, CsharpProjectParameters parent = null)
             : base(parent)

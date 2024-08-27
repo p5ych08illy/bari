@@ -68,6 +68,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"self-contained", () => { target.SelfContained = ParseBool(parser, value); }},
                     {"proto-file", () => { target.ProtoFile = ParseString(value); }},
                     {"grpc-services", () => { target.GrpcServices = ParseString(value); }},
+                    {"links", () => { target.Links = ParseLinks(parser, value); }},
                     };
         }
 
@@ -207,6 +208,32 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     throw new InvalidSpecificationException(
                         String.Format("Invalid debug level: {0}. Must be 'none', 'pdbonly' or 'full'", sval));
             }
+        }
+
+        private Tuple<string, string>[] ParseLinks(YamlParser parser, YamlNode node)
+        {
+            var seq = node as YamlSequenceNode;
+            if (seq != null)
+                return parser.EnumerateNodesOf(seq)
+                             .OfType<YamlNode>()
+                             .Select(childValue =>
+                                {
+                                    var mapping = childValue as YamlMappingNode;
+                                    if (mapping != null)
+                                    {
+                                        if (mapping.Children.ContainsKey(new YamlScalarNode("include")) && mapping.Children.ContainsKey(new YamlScalarNode("link")))
+                                        {
+                                            var include = ((YamlScalarNode)mapping.Children[new YamlScalarNode("include")]).Value;
+                                            var link = ((YamlScalarNode)mapping.Children[new YamlScalarNode("link")]).Value;
+                                            return new Tuple<string, string>(include, link);
+                                        }
+                                    }
+                                    return null;
+                                })
+                             .Where(x => x != null)
+                             .ToArray();
+            else
+                return new Tuple<string, string>[0];
         }
     }
 }

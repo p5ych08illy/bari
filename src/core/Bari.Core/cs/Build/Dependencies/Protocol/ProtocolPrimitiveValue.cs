@@ -17,7 +17,8 @@ namespace Bari.Core.Build.Dependencies.Protocol
         ProtocolNullable,
         ProtocolArray,
         ProtocolDict,
-        ProtocolNull
+        ProtocolNull,
+        ProtocolTuple
     }
 }
 
