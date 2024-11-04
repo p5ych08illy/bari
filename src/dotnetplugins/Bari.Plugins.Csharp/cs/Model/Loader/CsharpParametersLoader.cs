@@ -66,8 +66,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"use-winforms", () => { target.UseWinForms = ParseBool(parser, value); }},
                     {"target-os", () => { target.TargetOS = ParseString(value); }},
                     {"self-contained", () => { target.SelfContained = ParseBool(parser, value); }},
-                    {"proto-file", () => { target.ProtoFile = ParseString(value); }},
-                    {"grpc-services", () => { target.GrpcServices = ParseString(value); }},
+                    {"grpc-services", () => { target.GrpcServices = ParsegRPC(parser, value); }},
                     {"links", () => { target.Links = ParseLinks(parser, value); }},
                     };
         }
@@ -230,6 +229,32 @@ namespace Bari.Plugins.Csharp.Model.Loader
                                     }
                                     return null;
                                 })
+                             .Where(x => x != null)
+                             .ToArray();
+            else
+                return new Tuple<string, string>[0];
+        }
+
+        private Tuple<string, string>[] ParsegRPC(YamlParser parser, YamlNode node)
+        {
+            var seq = node as YamlSequenceNode;
+            if (seq != null)
+                return parser.EnumerateNodesOf(seq)
+                             .OfType<YamlNode>()
+                             .Select(childValue =>
+                             {
+                                 var mapping = childValue as YamlMappingNode;
+                                 if (mapping != null)
+                                 {
+                                     if (mapping.Children.ContainsKey(new YamlScalarNode("proto-file")) && mapping.Children.ContainsKey(new YamlScalarNode("services")))
+                                     {
+                                         var include = ((YamlScalarNode)mapping.Children[new YamlScalarNode("proto-file")]).Value;
+                                         var link = ((YamlScalarNode)mapping.Children[new YamlScalarNode("services")]).Value;
+                                         return new Tuple<string, string>(include, link);
+                                     }
+                                 }
+                                 return null;
+                             })
                              .Where(x => x != null)
                              .ToArray();
             else

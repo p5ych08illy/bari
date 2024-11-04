@@ -114,15 +114,18 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
             writer.WriteEndElement();
 
 
-            // Proto
-            if (parameters.IsProtoFileSpecified && parameters.IsGrpcServicesSpecified)
+            // gRPC
+            if (parameters.IsGrpcServicesSpecified && parameters.GrpcServices.Any())
             {
                 writer.WriteStartElement("ItemGroup");
-                writer.WriteStartElement("Protobuf");
-                writer.WriteAttributeString("Include", parameters.ProtoFile);
-                writer.WriteAttributeString("GrpcServices", parameters.GrpcServices);
-                writer.WriteElementString("Link", "Protos\\" + Path.GetFileName(parameters.ProtoFile));
-                writer.WriteEndElement();
+                foreach (var grpc in parameters.GrpcServices)
+                {
+                    writer.WriteStartElement("Protobuf");
+                    writer.WriteAttributeString("Include", grpc.Item1);
+                    writer.WriteAttributeString("GrpcServices", grpc.Item2);
+                    writer.WriteElementString("Link", "Protos\\" + Path.GetFileName(grpc.Item1));
+                    writer.WriteEndElement();
+                }
                 writer.WriteEndElement();
             }
 

@@ -48,8 +48,7 @@ namespace Bari.Plugins.Csharp.Model
             Define<bool>("UseWindowsForms");
             Define<string>("TargetOS");
             Define<bool>("SelfContained");
-            Define<string>("ProtoFile");
-            Define<string>("GrpcServices");
+            Define<Tuple<string, string>[]>("GrpcServices");
             Define<Tuple<string,string>[]>("Links");
         }
 
@@ -323,17 +322,9 @@ namespace Bari.Plugins.Csharp.Model
 
         public bool IsSelfContainedSpecified { get { return IsSpecified("SelfContained"); } }
 
-        public string ProtoFile
+        public Tuple<string, string>[] GrpcServices
         {
-            get { return Get<string>("ProtoFile"); }
-            set { Set("ProtoFile", value); }
-        }
-
-        public bool IsProtoFileSpecified { get { return IsSpecified("ProtoFile"); } }
-
-        public string GrpcServices
-        {
-            get { return Get<string>("GrpcServices"); }
+            get { return Get<Tuple<string, string>[]>("GrpcServices"); }
             set { Set("GrpcServices", value); }
         }
 
@@ -346,6 +337,7 @@ namespace Bari.Plugins.Csharp.Model
         }
 
         public bool IsLinksSpecified { get { return IsSpecified("Links"); } }
+
 
 
         public CsharpProjectParameters(Suite suite, CsharpProjectParameters parent = null)
@@ -386,7 +378,9 @@ namespace Bari.Plugins.Csharp.Model
                 debug = DebugLevel.Full;
             else
                 debug = DebugLevel.None;
-            writer.WriteElementString("DebugType", debug.ToString().ToLowerInvariant());
+
+            if (debug != DebugLevel.None)
+                writer.WriteElementString("DebugType", debug.ToString().ToLowerInvariant());
 
             string[] defines;
             if (AreDefinesSpecified)
