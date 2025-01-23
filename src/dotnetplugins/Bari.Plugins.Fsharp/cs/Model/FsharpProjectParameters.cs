@@ -34,6 +34,7 @@ namespace Bari.Plugins.Fsharp.Model
             Define<FrameworkProfile>("TargetFrameworkProfile");
             Define<string>("TargetOS");
             Define<bool>("SelfContained");
+            Define<string>("LanguageVersion");
         }
 
         public override FsharpProjectParameters CreateDefault(Suite suite, FsharpProjectParameters parent)
@@ -208,6 +209,14 @@ namespace Bari.Plugins.Fsharp.Model
         
         public bool IsSelfContainedSpecified { get { return IsSpecified("SelfContained"); } }
 
+        public string LanguageVersion
+        {
+            get { return Get<string>("LanguageVersion"); }
+            set { Set("LanguageVersion", value); }
+        }
+
+        public bool IsLanguageVersionSpecified { get { return IsSpecified("LanguageVersion"); } }
+
         public FsharpProjectParameters(Suite suite, FsharpProjectParameters parent = null)
             : base(parent)
         {
@@ -317,6 +326,9 @@ namespace Bari.Plugins.Fsharp.Model
                 XmlConvert.ToString(IsOptimizeSpecified ? Optimize : suite.ActiveGoal.Has(Suite.ReleaseGoal.Name)));
             writer.WriteElementString("Tailcalls",
                 XmlConvert.ToString(IsTailcallsSpecified ? Tailcalls : suite.ActiveGoal.Has(Suite.ReleaseGoal.Name)));
+            
+            if (IsLanguageVersionSpecified)
+                writer.WriteElementString("LangVersion", LanguageVersion);
 
             CLRPlatform platform;
             if (IsPlatformSpecified)

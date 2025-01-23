@@ -68,7 +68,8 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                     {"target-framework-profile", () => { target.TargetFrameworkProfile= ParseFrameworkProfile(ParseString(value)); }},
                     {"target-framework", () => ApplyFrameworkVersionAndProfile(target, ParseString(value))},
                     {"target-os", () => { target.TargetOS = ParseString(value); }},
-                    {"self-contained", () => { target.SelfContained = ParseBool(parser, value); }}
+                    {"self-contained", () => { target.SelfContained = ParseBool(parser, value); }},
+                    {"language-version", () => { target.LanguageVersion = ParseString(value); }},
                 };
         }
 
