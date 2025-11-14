@@ -56,6 +56,13 @@ namespace Bari.Plugins.VsCore.Tools.Versions
         {
         }
     }
+    public class MSBuildVS2026 : MSBuild
+    {
+        public MSBuildVS2026(IParameters parameters) :
+            base(parameters, VSInstance.GetMsBuildInstallPath("18", "Current"))
+        {
+        }
+    }
     public class MSBuildInPath : MSBuild
     {
         public MSBuildInPath(IParameters parameters) :
