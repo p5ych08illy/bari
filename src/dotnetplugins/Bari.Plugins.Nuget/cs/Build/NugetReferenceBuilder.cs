@@ -153,6 +153,10 @@ namespace Bari.Plugins.Nuget.Build
                         return NugetLibraryProfile.Net70;
                     case FrameworkVersion.v8:
                         return NugetLibraryProfile.Net80;
+                    case FrameworkVersion.v9:
+                        return NugetLibraryProfile.Net90;
+                    case FrameworkVersion.v10:
+                        return NugetLibraryProfile.Net100;
                 }
             }
 

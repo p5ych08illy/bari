@@ -5,6 +5,8 @@
     /// </summary>
     public enum NugetLibraryProfile
     {
+        Net100 = 20,
+        Net90 = 19,
         Net80 = 18,
         Net70 = 17,
         Net60 = 16,

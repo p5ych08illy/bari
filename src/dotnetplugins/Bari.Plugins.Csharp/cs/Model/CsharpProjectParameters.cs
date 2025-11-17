@@ -511,6 +511,10 @@ namespace Bari.Plugins.Csharp.Model
                     return "net7.0";
                 case FrameworkVersion.v8:
                     return "net8.0";
+                case FrameworkVersion.v9:
+                    return "net9.0";
+                case FrameworkVersion.v10:
+                    return "net10.0";
                 default:
                     throw new ArgumentOutOfRangeException("targetFrameworkVersion");
             }

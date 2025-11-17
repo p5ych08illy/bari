@@ -140,9 +140,11 @@ namespace Bari.Plugins.VCpp.Model.Loader
                 case "6.0": return FrameworkVersion.v6;
                 case "7.0": return FrameworkVersion.v7;
                 case "8.0": return FrameworkVersion.v8;
+                case "9.0": return FrameworkVersion.v9;
+                case "10.0": return FrameworkVersion.v10;
                 default:
                     throw new InvalidSpecificationException(
-                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7', '4.7.1', '4.7.2', '4.8', '6.0', '7.0' or '8.0'", value));
+                        String.Format("Invalid framework version: {0}. Must be '2.0', '3.0', '3.5', '4.0', '4.5', '4.5.1', '4.5.2', '4.6', '4.6.1', '4.6.2', '4.7', '4.7.1', '4.7.2', '4.8', '6.0', '7.0', '8.0', '9.0' or '10.0'", value));
             }
         }
 
