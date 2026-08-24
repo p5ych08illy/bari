@@ -89,6 +89,35 @@ namespace Bari.Plugins.Nuget.Tools
             return parent.EnumerateDirectories().FirstOrDefault(child => child.Name.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase));
         }
 
+        /// <summary>
+        /// Finds the lib directory of a .NET (Core) target framework, accepting a platform specific
+        /// variant of it as well
+        /// </summary>
+        /// <remarks>
+        /// A package built from a project targeting <c>net10.0-windows</c> keeps its assemblies under
+        /// <c>lib\net10.0-windows7.0</c>, not under <c>lib\net10.0</c> - MSBuild normalizes the moniker
+        /// and NuGet uses it verbatim as the directory name. Looking for the exact name only would
+        /// silently find nothing and fall through to the empty <c>lib\</c> root.
+        ///
+        /// <para>An exact match wins; after it a Windows specific one, because that is what a WPF or
+        /// WinForms library ships as; and only then any other platform.</para>
+        /// </remarks>
+        /// <param name="parent">The package's <c>lib</c> directory</param>
+        /// <param name="tfm">Target framework moniker without a platform, for example <c>net10.0</c></param>
+        /// <returns>Returns the directory, or <c>null</c> if the package has nothing for this framework</returns>
+        private DirectoryInfo GetNetChild(DirectoryInfo parent, string tfm)
+        {
+            var exact = GetChild(parent, tfm);
+            if (exact != null)
+                return exact;
+
+            return parent.EnumerateDirectories()
+                         .Where(child => child.Name.StartsWith(tfm + "-", StringComparison.InvariantCultureIgnoreCase))
+                         .OrderBy(child => child.Name.StartsWith(tfm + "-windows", StringComparison.InvariantCultureIgnoreCase) ? 0 : 1)
+                         .ThenBy(child => child.Name, StringComparer.InvariantCultureIgnoreCase)
+                         .FirstOrDefault();
+        }
+
         public void CreatePackage(IFileSystemDirectory targetRoot, string packageName, string nuspec)
         {
             var localRoot = targetRoot as LocalFileSystemDirectory;
@@ -112,6 +141,65 @@ namespace Bari.Plugins.Nuget.Tools
             }
         }
 
+        /// <summary>
+        /// Packs an existing nuspec file with an explicit base path, version and property set
+        /// </summary>
+        public bool Pack(IFileSystemDirectory workingDirectory, string nuspecPath, string basePath,
+                         string outputDirectory, string version, string properties)
+        {
+            return Run(workingDirectory,
+                       "pack", Quote(nuspecPath),
+                       "-BasePath", Quote(basePath),
+                       "-OutputDirectory", Quote(outputDirectory),
+                       "-Version", Quote(version),
+                       "-Properties", Quote(properties),
+                       "-NonInteractive",
+                       "-Verbosity", Verbosity);
+        }
+
+        /// <summary>
+        /// Pushes an already created package to a feed given either by name or by URL
+        /// </summary>
+        public bool Push(IFileSystemDirectory workingDirectory, string packagePath, string feed,
+                         string apiKey, bool skipDuplicate)
+        {
+            var args = new List<string>
+                {
+                    "push", Quote(packagePath),
+                    "-Source", Quote(feed)
+                };
+
+            if (!String.IsNullOrEmpty(apiKey))
+            {
+                args.Add("-ApiKey");
+                args.Add(Quote(apiKey));
+            }
+
+            if (skipDuplicate)
+                args.Add("-SkipDuplicate");
+
+            args.Add("-NonInteractive");
+            args.Add("-Verbosity");
+            args.Add(Verbosity);
+
+            return Run(workingDirectory, args.ToArray());
+        }
+
+        /// <summary>
+        /// Quotes a command line argument
+        ///
+        /// <para><see cref="ExternalTool.Run"/> joins the arguments with spaces without any quoting,
+        /// so every path and property value has to be quoted by hand. The trailing backslashes have to
+        /// go: a backslash before the closing quote escapes the quote itself.</para>
+        /// </summary>
+        private static string Quote(string value)
+        {
+            if (value == null)
+                return "\"\"";
+
+            return "\"" + value.TrimEnd('\\') + "\"";
+        }
+
         private string GetRelativePath(string path, LocalFileSystemDirectory root)
         {
             return path.Substring(root.AbsolutePath.Length).TrimStart(Path.DirectorySeparatorChar);
@@ -119,9 +207,11 @@ namespace Bari.Plugins.Nuget.Tools
 
         private void AddDlls(DirectoryInfo libRoot, List<string> result, LocalFileSystemDirectory localRoot, NugetLibraryProfile maxProfile)
         {
-            var lib80 = GetChild(libRoot, "net8.0");
-            var lib70 = GetChild(libRoot, "net7.0");
-            var lib60 = GetChild(libRoot, "net6.0");
+            var lib100 = GetNetChild(libRoot, "net10.0");
+            var lib90 = GetNetChild(libRoot, "net9.0");
+            var lib80 = GetNetChild(libRoot, "net8.0");
+            var lib70 = GetNetChild(libRoot, "net7.0");
+            var lib60 = GetNetChild(libRoot, "net6.0");
             var lib45 = GetChild(libRoot, "net45-full") ??
                         GetChild(libRoot, "net45");
             var lib40 = GetChild(libRoot, "net40-full") ??
@@ -134,7 +224,11 @@ namespace Bari.Plugins.Nuget.Tools
                         GetChild(libRoot, "20");
             var lib20standard = GetChild(libRoot, "netstandard2.0");
 
-            if (lib80 != null && maxProfile >= NugetLibraryProfile.Net80)
+            if (lib100 != null && maxProfile >= NugetLibraryProfile.Net100)
+                result.AddRange(GetDllsIn(localRoot, lib100));
+            else if (lib90 != null && maxProfile >= NugetLibraryProfile.Net90)
+                result.AddRange(GetDllsIn(localRoot, lib90));
+            else if (lib80 != null && maxProfile >= NugetLibraryProfile.Net80)
                 result.AddRange(GetDllsIn(localRoot, lib80));
             else if (lib70 != null && maxProfile >= NugetLibraryProfile.Net70)
                 result.AddRange(GetDllsIn(localRoot, lib70));

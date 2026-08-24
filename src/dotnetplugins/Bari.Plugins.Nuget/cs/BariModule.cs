@@ -1,7 +1,10 @@
 ﻿using Bari.Core.Build;
+using Bari.Core.Commands;
 using Bari.Core.Commands.Pack;
 using Bari.Core.Model.Loader;
 using Bari.Plugins.Nuget.Build;
+using Bari.Plugins.Nuget.Commands;
+using Bari.Plugins.Nuget.Model.Loader;
 using Bari.Plugins.Nuget.Packager;
 using Bari.Plugins.Nuget.Packager.Loader;
 using Bari.Plugins.Nuget.Tools;
@@ -27,6 +30,10 @@ namespace Bari.Plugins.Nuget
             Bind<IProductPackager>().To<NugetProductPackager>().Named("nuget");
             Bind<IYamlProjectParametersLoader>().To<NugetPackagerParametersLoader>();
             Bind<INuGet>().To<NuGet>();
+
+            Bind<ICommand>().To<NupkgCommand>().Named("nupkg");
+            Bind<ICommandPrerequisites>().To<DefaultCommandPrerequisites>().Named("nupkg");
+            Bind<IYamlProjectParametersLoader>().To<NupkgParametersLoader>();
         }
     }
 }
