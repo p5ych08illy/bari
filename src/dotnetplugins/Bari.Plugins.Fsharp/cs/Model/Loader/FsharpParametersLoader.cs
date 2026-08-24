@@ -70,6 +70,7 @@ namespace Bari.Plugins.Fsharp.Model.Loader
                     {"target-os", () => { target.TargetOS = ParseString(value); }},
                     {"self-contained", () => { target.SelfContained = ParseBool(parser, value); }},
                     {"language-version", () => { target.LanguageVersion = ParseString(value); }},
+                    {"cet-compat", () => { target.CETCompat = ParseBool(parser, value); }},
                 };
         }
 

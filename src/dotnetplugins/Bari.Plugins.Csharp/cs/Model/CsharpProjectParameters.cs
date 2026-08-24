@@ -50,6 +50,7 @@ namespace Bari.Plugins.Csharp.Model
             Define<bool>("SelfContained");
             Define<Tuple<string, string>[]>("GrpcServices");
             Define<Tuple<string,string>[]>("Links");
+            Define<bool>("CETCompat");
         }
 
         public override CsharpProjectParameters CreateDefault(Suite suite, CsharpProjectParameters parent)
@@ -338,6 +339,14 @@ namespace Bari.Plugins.Csharp.Model
 
         public bool IsLinksSpecified { get { return IsSpecified("Links"); } }
 
+        public bool CETCompat
+        {
+            get { return Get<bool>("CETCompat"); }
+            set { Set("CETCompat", value); }
+        }
+
+        public bool IsCETCompatSpecified { get { return IsSpecified("CETCompat"); } }
+
 
 
         public CsharpProjectParameters(Suite suite, CsharpProjectParameters parent = null)
@@ -400,6 +409,9 @@ namespace Bari.Plugins.Csharp.Model
                 writer.WriteElementString("FileAlignment", XmlConvert.ToString(FileAlign.Value));
 
             writer.WriteElementString("HighEntropyVA", XmlConvert.ToString(IsHighEntropyVirtualAddressSpaceSpecified && HighEntropyVirtualAddressSpace));
+
+            if (IsCETCompatSpecified)
+                writer.WriteElementString("CETCompat", XmlConvert.ToString(CETCompat));
 
             if (IsKeyContainerSpecified)
                 writer.WriteElementString("KeyContainerName", KeyContainer);

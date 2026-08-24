@@ -35,6 +35,7 @@ namespace Bari.Plugins.Fsharp.Model
             Define<string>("TargetOS");
             Define<bool>("SelfContained");
             Define<string>("LanguageVersion");
+            Define<bool>("CETCompat");
         }
 
         public override FsharpProjectParameters CreateDefault(Suite suite, FsharpProjectParameters parent)
@@ -217,6 +218,14 @@ namespace Bari.Plugins.Fsharp.Model
 
         public bool IsLanguageVersionSpecified { get { return IsSpecified("LanguageVersion"); } }
 
+        public bool CETCompat
+        {
+            get { return Get<bool>("CETCompat"); }
+            set { Set("CETCompat", value); }
+        }
+
+        public bool IsCETCompatSpecified { get { return IsSpecified("CETCompat"); } }
+
         public FsharpProjectParameters(Suite suite, FsharpProjectParameters parent = null)
             : base(parent)
         {
@@ -318,6 +327,9 @@ namespace Bari.Plugins.Fsharp.Model
 
             if (IsHighEntropyVirtualAddressSpaceSpecified)
                 writer.WriteElementString("HighEntropyVA", XmlConvert.ToString(HighEntropyVirtualAddressSpace));
+
+            if (IsCETCompatSpecified)
+                writer.WriteElementString("CETCompat", XmlConvert.ToString(CETCompat));
 
             if (IsKeyFileSpecified)
                 writer.WriteElementString("KeyOriginatorFile", KeyFile);

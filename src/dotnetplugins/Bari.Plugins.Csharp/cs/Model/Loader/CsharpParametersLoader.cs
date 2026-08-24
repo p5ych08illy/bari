@@ -68,6 +68,7 @@ namespace Bari.Plugins.Csharp.Model.Loader
                     {"self-contained", () => { target.SelfContained = ParseBool(parser, value); }},
                     {"grpc-services", () => { target.GrpcServices = ParsegRPC(parser, value); }},
                     {"links", () => { target.Links = ParseLinks(parser, value); }},
+                    {"cet-compat", () => { target.CETCompat = ParseBool(parser, value); }},
                     };
         }
 
