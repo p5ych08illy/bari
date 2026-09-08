@@ -34,22 +34,36 @@ namespace Bari.Plugins.VsCore.Tools
         public void Run(IFileSystemDirectory root, string relativePath, bool restore)
         {
             var localRoot = root as LocalFileSystemDirectory;
-            if (localRoot != null)
-            {
-                var absPath = Path.Combine(localRoot.AbsolutePath, relativePath);
-                if (!Run(root, (Path.GetFileName(absPath) ?? String.Empty), "/m",
-                                                                            "/nologo", 
-                                                                            "/verbosity:" + Verbosity, 
-                                                                            "/consoleloggerparameters:" + ConsoleLoggerParameters, 
-                                                                            "/t:" + (restore ? "restore," : "") + "build",
-                                                                            "/nr:false"
-                                                                            ))
-                    throw new MSBuildFailedException();
-            }
-            else
-            {
+            if (localRoot == null)
                 throw new NotSupportedException("Only local file system is supported for MSBuild!");
-            }
+
+            var absPath = Path.Combine(localRoot.AbsolutePath, relativePath);
+            var fileName = Path.GetFileName(absPath) ?? String.Empty;
+
+            // Restore must not share an MSBuild invocation with the build. MSBuild evaluates
+            // every project once per invocation and caches that evaluation, but restore is what
+            // writes obj\*.nuget.g.props / obj\*.nuget.g.targets, which are imported *during*
+            // evaluation. In a combined '/t:restore,build' run the build phase can therefore
+            // consume a project state from before the restore. MSBuild's own '-restore' switch
+            // exists for exactly this reason (it re-evaluates between the two submissions);
+            // using two separate processes gives the same guarantee without requiring
+            // MSBuild 15.5+, which matters because bari also supports MSBuild 4.0 / VS2013 / VS2015.
+            if (restore)
+                RunTarget(root, fileName, "restore");
+
+            RunTarget(root, fileName, "build");
+        }
+
+        private void RunTarget(IFileSystemDirectory root, string fileName, string target)
+        {
+            if (!Run(root, fileName, "/m",
+                                     "/nologo",
+                                     "/verbosity:" + Verbosity,
+                                     "/consoleloggerparameters:" + ConsoleLoggerParameters,
+                                     "/t:" + target,
+                                     "/nr:false"
+                    ))
+                throw new MSBuildFailedException();
         }
 
         private string ConsoleLoggerParameters

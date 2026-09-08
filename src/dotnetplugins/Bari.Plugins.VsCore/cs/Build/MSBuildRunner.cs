@@ -52,10 +52,15 @@ namespace Bari.Plugins.VsCore.Build
             get
             {
                 return MultipleDependenciesHelper.CreateMultipleDependencies(
-                    new HashSet<IDependencies>(new[]
+                    new HashSet<IDependencies>(new IDependencies[]
                     {
                         new SubtaskDependency(slnBuilder),
-                        slnBuilder.FullSourceDependencies
+                        slnBuilder.FullSourceDependencies,
+
+                        // The NuGet restore outputs live outside the build cache's reach, in
+                        // target/tmp/[module]/[project]/obj, so a cache hit could otherwise report
+                        // success over a target directory where project.assets.json is missing.
+                        new NuGetRestoreStateDependencies(targetRoot, slnBuilder.Projects)
                     }));
             }
         }

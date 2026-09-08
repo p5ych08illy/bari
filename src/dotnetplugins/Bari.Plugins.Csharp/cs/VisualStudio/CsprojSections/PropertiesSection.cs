@@ -35,16 +35,43 @@ namespace Bari.Plugins.Csharp.VisualStudio.CsprojSections
 
         public void WriteOutputPath(XmlWriter writer, Project project)
         {
-            var tmpFolder = ToProjectRelativePath(project,
-                  Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
-                              "tmp",
-                              project.Module.Name,
-                              project.Name,
-                              "obj"),
-                              "cs");
+            // The path must be absolute. Microsoft.Common.props captures
+            // $(_InitialBaseIntermediateOutputPath) from the raw value written here, but later hands out
+            // $(BaseIntermediateOutputPath) and $(MSBuildProjectExtensionsPath) rooted against the project
+            // directory. With a relative value the three describe the same directory through different
+            // strings, which makes this guard in Microsoft.WinFX.targets (target GenerateTemporaryTargetAssembly)
+            // believe the intermediate directory was redirected away from the NuGet one:
+            //
+            //     Condition="... and '$(_InitialBaseIntermediateOutputPath)' != '$(BaseIntermediateOutputPath)'"
+            //
+            // It then adds project.assets.json and project.nuget.cache to the files it copies into the
+            // "other" directory and deletes afterwards - except source and destination are the same file
+            // here, so the copy is a no-op and the delete destroys the project's own restore state. Every
+            // WPF markup compilation pass that needs a temporary target assembly wipes the assets file, and
+            // the next build of that project fails with NETSDK1004.
             writer.WriteStartElement("PropertyGroup");
-            writer.WriteElementString("BaseIntermediateOutputPath", tmpFolder);
+            writer.WriteElementString("BaseIntermediateOutputPath", GetNuGetIntermediateOutputPath(project, "cs"));
             writer.WriteEndElement();
+        }
+
+        /// <summary>
+        /// Gets the absolute path of the directory NuGet restore writes its outputs to for a project.
+        /// </summary>
+        private string GetNuGetIntermediateOutputPath(Project project, string sourceSetName)
+        {
+            var localTargetDir = targetDir as LocalFileSystemDirectory;
+            if (localTargetDir == null)
+            {
+                // Non local target directories cannot be expressed as an absolute path
+                return ToProjectRelativePath(project,
+                    Path.Combine(Suite.SuiteRoot.GetRelativePath(targetDir),
+                                 "tmp", project.Module.Name, project.Name, "obj"),
+                    sourceSetName);
+            }
+
+            return Path.Combine(localTargetDir.AbsolutePath,
+                                "tmp", project.Module.Name, project.Name, "obj")
+                   + Path.DirectorySeparatorChar;
         }
 
         /// <summary>
