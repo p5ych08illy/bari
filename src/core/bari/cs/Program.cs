@@ -28,6 +28,20 @@ namespace Bari.Console
 
         static int Main(string[] args)
         {
+            try
+            {
+                return Run(args);
+            }
+            catch (Exception ex)
+            {
+                // Startup can fail before the kernel or user output is available.
+                System.Console.Error.WriteLine(ex.ToString());
+                return 2;
+            }
+        }
+
+        private static int Run(string[] args)
+        {
             var consoleParams = new ConsoleParameters(args);
             if (consoleParams.VerboseOutput)
                 EnableConsoleDebugLog();

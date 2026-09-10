@@ -27,20 +27,24 @@ namespace Bari.Plugins.Vcs.Hg
                 try
                 {
                     var localRoot = suiteRoot as LocalFileSystemDirectory;
-                    if (localRoot != null)
+                    // Do not initialize the Mercurial client for non-Mercurial suites.
+                    if (localRoot != null && Directory.Exists(Path.Combine(localRoot.AbsolutePath, ".hg")))
                     {
                         if (Client.CouldLocateClient)
                         {
-                            if (Directory.Exists(Path.Combine(localRoot.AbsolutePath, ".hg")))
-                            {
-                                log.InfoFormat("Mercurial support initialized, client version {0}", Client.GetVersion());
-                                return true;
-                            }
+                            log.InfoFormat("Mercurial support initialized, client version {0}", Client.GetVersion());
+                            return true;
                         }
                     }
                 }
                 catch (InvalidOperationException ex)
                 {
+                    log.WarnFormat("Could not initialize Mercurial support: {0}", ex.Message);
+                }
+                catch (ArgumentException ex)
+                {
+                    // Mercurial.Net copies the process environment into a case-insensitive
+                    // dictionary, which rejects duplicate Windows keys such as Path/PATH.
                     log.WarnFormat("Could not initialize Mercurial support: {0}", ex.Message);
                 }
 
